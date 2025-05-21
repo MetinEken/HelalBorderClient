@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Helal Border</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Çevre değişkenleri ve giriş kontrolü için gerekli dosyalar -->
+    <script src="env.js"></script>
+    <script src="auth.js"></script>
+    <!-- Material UI CSS ve JS dosyaları -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <style>
+      body {
+        font-family: "Roboto", "Segoe UI", sans-serif;
+        background-color: #f2f4f8;
+        margin: 0;
+        padding: 0;
+      }
+
+      .header {
+        background-color: #007bff;
+        color: white;
+        padding: 1rem 2rem;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .logout-button {
+        position: absolute;
+        right: 2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+      }
+      
+      .logout-button:hover {
+        text-decoration: underline;
+      }
+
+      .tab-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .tabs {
+        display: flex;
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .tab {
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 500;
+        text-align: center;
+        flex: 1;
+      }
+
+      .tab:hover {
+        background-color: #e0e0e0;
+      }
+
+      .tab.active {
+        background-color: #fff;
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 2rem;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Yapay Zeka Kelimeleri Tab Stilleri */
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+      }
+
+      h1, h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-top: 1.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        resize: vertical;
+        min-height: 30rem;
+      }
+
+      button {
+        margin-top: 2rem;
+        width: 100%;
+        padding: 1rem;
+        background-color: #007bff;
+        color: white;
+        font-size: 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #response {
+        margin-top: 1.5rem;
+        background-color: #f8f9fa;
+        border-left: 4px solid #28a745;
+        padding: 1rem;
+        white-space: pre-wrap;
+      }
+
+      .empty-tab {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Helal Border</h1>
+      <div class="logout-button" onclick="logout()">
+        <i class="material-icons">exit_to_app</i> Çıkış
+      </div>
+    </div>
+
+    <div class="tab-container">
+      <div class="tabs">
+        <div class="tab" data-tab="tab1">Yapay Zeka Kelimeleri</div>
+        <div class="tab" data-tab="tab2">Barcode Kelimeler</div>
+        <div class="tab" data-tab="tab3">Token Kullanım</div>
+        <div class="tab" data-tab="tab4">Hata Bildirimleri</div>
+      </div>
+
+      <!-- Tab 1: Yapay Zeka Kelimeleri (Mevcut içerik) -->
+      <div id="tab1" class="tab-content">
+        <div class="container">
+          <h2>Helal Kontrol Bilgilerini Güncelle</h2>
+          <form id="helalForm">
+            <label for="baseTalimat">Base Talimat:</label>
+            <textarea id="baseTalimat" required></textarea>
+
+            <label for="detayliTalimat">Detaylı Talimat:</label>
+            <textarea id="detayliTalimat" required></textarea>
+
+            <label for="eCode">E Kodu:</label>
+            <textarea id="eCode"></textarea>
+
+            <label for="alcoholWords">Alkol Kelimeleri:</label>
+            <textarea id="alcoholWords"></textarea>
+
+            <label for="containingAlcohol">İçeren Alkol:</label>
+            <textarea id="containingAlcohol"></textarea>
+
+            <label for="animalProduct">Hayvansal Ürün:</label>
+            <textarea id="animalProduct"></textarea>
+
+            <label for="notConsideredAlcohol">Alkol Sayılmayanlar:</label>
+            <textarea id="notConsideredAlcohol"></textarea>
+
+            <button type="submit">Güncelle</button>
+          </form>
+
+          <div id="response"></div>
+          <div id="formalizeResponse" style="margin-top: 1rem; color: #28a745"></div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Barcode Kelimeler -->
+      <div id="tab2" class="tab-content">
+        <div class="empty-tab">
+          <h2>Barcode Kelimeler</h2>
+          <p>Bu bölüm henüz hazırlanmaktadır.</p>
+        </div>
+      </div>
+
+      <!-- Tab 3: Token Kullanım -->
+      <div id="tab3" class="tab-content">
+        <div class="empty-tab">
+          <h2>Token Kullanım</h2>
+          <p>Bu bölüm henüz hazırlanmaktadır.</p>
+        </div>
+      </div>
+
+      <!-- Tab 4: Hata Bildirimleri -->
+      <div id="tab4" class="tab-content">
+        <div class="empty-tab">
+          <h2>Hata Bildirimleri</h2>
+          <p>Bu bölüm henüz hazırlanmaktadır.</p>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // Tab işlevselliği
+      document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // İlk açılışta 4. tab'ı aktif yap
+        activateTab('tab4');
+        
+        tabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            activateTab(tabId);
+          });
+        });
+        
+        function activateTab(tabId) {
+          // Tüm tabları ve içeriklerini deaktif yap
+          tabs.forEach(tab => tab.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Seçilen tabı ve içeriğini aktif yap
+          document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+          document.getElementById(tabId).classList.add('active');
+        }
+        
+        // Formalize Et butonuna tıklanınca çalışacak fonksiyon
+        // Bu kısmı yorum satırına aldım çünkü HTML'de de yorum satırına alınmış
+        /*
+        document
+          .getElementById("formalizeButton")
+          .addEventListener("click", async function () {
+            let res = window.confirm("Formalize etmek istediginden eminmisin!!!");
+            if (!res) {
+              console.log("KAbul edilmedi");
+              return;
+            }
+            try {
+              const res = await fetch(
+                `${BASE_URL}/helal-kontrol/normalize-fields`,
+                {
+                  method: "PUT",
+                }
+              );
+
+              const result = await res.text(); // String dönecek
+              document.getElementById("formalizeResponse").innerText =
+                "Sonuç: " + result;
+            } catch (err) {
+              document.getElementById("formalizeResponse").innerText =
+                "Hata: " + err.message;
+            }
+          });
+        */
+        
+        // Verileri çek ve textarea'lara yerleştir
+        async function fetchAndFillData() {
+          try {
+            const res = await fetch(
+              `${BASE_URL}/helal-kontrol/base-talimat`
+            );
+            if (!res.ok) throw new Error("Kayıt bulunamadı");
+            const data = await res.json();
+
+            // Her alanı doldur
+            document.getElementById("baseTalimat").value = data.baseTalimat || "";
+            document.getElementById("detayliTalimat").value =
+              data.detayliTalimat || "";
+            document.getElementById("eCode").value = data.eCode || "";
+            document.getElementById("alcoholWords").value =
+              data.alcoholWords || "";
+            document.getElementById("containingAlcohol").value =
+              data.containingAlcohol || "";
+            document.getElementById("animalProduct").value =
+              data.animalProduct || "";
+            document.getElementById("notConsideredAlcohol").value =
+              data.notConsideredAlcohol || "";
+
+            document.getElementById("response").innerText = "Veriler yüklendi.";
+          } catch (err) {
+            document.getElementById("response").innerText =
+              "Hata: " + err.message;
+          }
+        }
+
+        // Güncelleme işlemi
+        document
+          .getElementById("helalForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const data = {
+              baseTalimat: document.getElementById("baseTalimat").value,
+              detayliTalimat: document.getElementById("detayliTalimat").value,
+              eCode: document.getElementById("eCode").value || null,
+              alcoholWords: document.getElementById("alcoholWords").value || null,
+              containingAlcohol:
+                document.getElementById("containingAlcohol").value || null,
+              animalProduct:
+                document.getElementById("animalProduct").value || null,
+              notConsideredAlcohol:
+                document.getElementById("notConsideredAlcohol").value || null,
+            };
+
+            try {
+              const res = await fetch(
+                `${BASE_URL}/helal-kontrol`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(data),
+                }
+              );
+
+              const result = await res.json();
+              document.getElementById("response").innerText =
+                "Güncellendi:\n" + JSON.stringify(result, null, 2);
+            } catch (err) {
+              document.getElementById("response").innerText =
+                "Güncelleme hatası: " + err.message;
+            }
+          });
+
+        // Yapay Zeka Kelimeleri tabı aktif olduğunda verileri çek
+        document.querySelector('.tab[data-tab="tab1"]').addEventListener('click', fetchAndFillData);
+        
+        // Sayfa yüklendiğinde verileri çek (eğer Yapay Zeka Kelimeleri tabı aktifse)
+        if (document.querySelector('.tab[data-tab="tab1"]').classList.contains('active')) {
+          fetchAndFillData();
+        }
+      });
+    </script>
+  </body>
+</html>

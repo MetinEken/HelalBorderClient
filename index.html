@@ -2,223 +2,145 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <title>Helal Kontrol Güncelle</title>
+    <title>Helal Border - Hoş Geldiniz</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Çevre değişkenleri ve giriş kontrolü için gerekli dosyalar -->
+    <script src="env.js"></script>
+    <script src="auth.js"></script>
     <style>
       body {
-        font-family: "Segoe UI", sans-serif;
+        font-family: "Roboto", "Segoe UI", sans-serif;
         background-color: #f2f4f8;
         margin: 0;
-        padding: 2rem;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
       }
 
-      .container {
+      .welcome-container {
         max-width: 800px;
-        margin: auto;
+        text-align: center;
         background-color: #fff;
-        padding: 2rem;
+        padding: 3rem;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
-        text-align: center;
         color: #333;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
       }
 
-      label {
-        display: block;
-        margin-top: 1.5rem;
-        font-weight: 600;
-        color: #333;
+      p {
+        color: #666;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
       }
 
-      textarea {
-        width: 100%;
-        padding: 0.75rem;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        resize: vertical;
-        min-height: 30rem;
-      }
-
-      button {
-        margin-top: 2rem;
-        width: 100%;
-        padding: 1rem;
+      .enter-button {
+        display: inline-block;
+        padding: 1rem 2rem;
         background-color: #007bff;
         color: white;
-        font-size: 1rem;
-        border: none;
+        font-size: 1.2rem;
+        text-decoration: none;
         border-radius: 4px;
+        transition: background-color 0.3s;
         cursor: pointer;
+        border: none;
       }
 
-      button:hover {
+      .enter-button:hover {
         background-color: #0056b3;
       }
 
-      #response {
-        margin-top: 1.5rem;
-        background-color: #f8f9fa;
-        border-left: 4px solid #28a745;
+      .logo {
+        max-width: 200px;
+        margin-bottom: 2rem;
+      }
+      
+      /* Şifre giriş formu stilleri */
+      .password-form {
+        display: none;
+        margin-top: 2rem;
+        text-align: left;
+      }
+      
+      .password-form input {
+        width: 100%;
         padding: 1rem;
-        white-space: pre-wrap;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      
+      .error-message {
+        color: #dc3545;
+        margin-top: 1rem;
+        display: none;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Helal Kontrol Bilgilerini Güncelle</h1>
-      <form id="helalForm">
-        <label for="baseTalimat">Base Talimat:</label>
-        <textarea id="baseTalimat" required></textarea>
-
-        <label for="detayliTalimat">Detaylı Talimat:</label>
-        <textarea id="detayliTalimat" required></textarea>
-
-        <label for="eCode">E Kodu:</label>
-        <textarea id="eCode"></textarea>
-
-        <label for="alcoholWords">Alkol Kelimeleri:</label>
-        <textarea id="alcoholWords"></textarea>
-
-        <label for="containingAlcohol">İçeren Alkol:</label>
-        <textarea id="containingAlcohol"></textarea>
-
-        <label for="animalProduct">Hayvansal Ürün:</label>
-        <textarea id="animalProduct"></textarea>
-
-        <label for="notConsideredAlcohol">Alkol Sayılmayanlar:</label>
-        <textarea id="notConsideredAlcohol"></textarea>
-
-        <button type="submit">Güncelle</button>
-      </form>
-
-      <div id="response"></div>
+    <div class="welcome-container">
+      <h1>Helal Border</h1>
+      <p>Helal Kontrol Sistemine Hoş Geldiniz</p>
+      
+      <!-- Sisteme Giriş butonu -->
+      <button id="loginButton" class="enter-button">Sisteme Giriş</button>
+      
+      <!-- Şifre giriş formu -->
+      <div id="passwordForm" class="password-form">
+        <p>Lütfen sisteme giriş için şifrenizi giriniz:</p>
+        <input type="password" id="passwordInput" placeholder="Şifre">
+        <button id="submitPassword" class="enter-button">Giriş Yap</button>
+        <p id="errorMessage" class="error-message">Hatalı şifre! Lütfen tekrar deneyiniz.</p>
+      </div>
     </div>
-    <!-- FORMALIZE ET butonu -->
-    <!-- <button
-      type="button"
-      id="formalizeButton"
-      style="background-color: #28a745; margin-top: 1rem"
-    >
-      Formalize Et
-    </button> -->
-
-    <!-- Formalize Et sonucu gösterimi -->
-    <div id="formalizeResponse" style="margin-top: 1rem; color: #28a745"></div>
-
+    
     <script>
-      // Formalize Et butonuna tıklanınca çalışacak fonksiyon
-      document
-        .getElementById("formalizeButton")
-        .addEventListener("click", async function () {
-          let res = window.confirm("Formalize etmek istediginden eminmisin!!!");
-          if (!res) {
-            console.log("KAbul edilmedi");
-            return;
-          }
-          try {
-            const res = await fetch(
-              "https://chat-bot-api-126af91abc14.herokuapp.com/helal-kontrol/normalize-fields",
-              {
-                method: "PUT",
-              }
-            );
-
-            const result = await res.text(); // String dönecek
-            document.getElementById("formalizeResponse").innerText =
-              "Sonuç: " + result;
-          } catch (err) {
-            document.getElementById("formalizeResponse").innerText =
-              "Hata: " + err.message;
-          }
-        });
-    </script>
-
-    <script>
-      let id = null;
-
-      // Verileri çek ve textarea'lara yerleştir
-      async function fetchAndFillData() {
-        // id = prompt("Görüntülenecek kaydın ID'sini giriniz:");
-        // if (!id) {
-        //   alert("Geçerli bir ID girilmedi.");
-        //   return;
-        // }
-
-        try {
-          const res = await fetch(
-            `https://chat-bot-api-126af91abc14.herokuapp.com/helal-kontrol/base-talimat`
-          );
-          if (!res.ok) throw new Error("Kayıt bulunamadı");
-          const data = await res.json();
-
-          // Her alanı doldur
-          document.getElementById("baseTalimat").value = data.baseTalimat || "";
-          document.getElementById("detayliTalimat").value =
-            data.detayliTalimat || "";
-          document.getElementById("eCode").value = data.eCode || "";
-          document.getElementById("alcoholWords").value =
-            data.alcoholWords || "";
-          document.getElementById("containingAlcohol").value =
-            data.containingAlcohol || "";
-          document.getElementById("animalProduct").value =
-            data.animalProduct || "";
-          document.getElementById("notConsideredAlcohol").value =
-            data.notConsideredAlcohol || "";
-
-          document.getElementById("response").innerText = "Veriler yüklendi.";
-        } catch (err) {
-          document.getElementById("response").innerText =
-            "Hata: " + err.message;
+      document.addEventListener('DOMContentLoaded', function() {
+        // Kullanıcı daha önce giriş yapmışsa doğrudan app.html'e yönlendir
+        if (isLoggedIn()) {
+          window.location.href = 'app.html';
+          return;
         }
-      }
-
-      // Güncelleme işlemi
-      document
-        .getElementById("helalForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          const data = {
-            baseTalimat: document.getElementById("baseTalimat").value,
-            detayliTalimat: document.getElementById("detayliTalimat").value,
-            eCode: document.getElementById("eCode").value || null,
-            alcoholWords: document.getElementById("alcoholWords").value || null,
-            containingAlcohol:
-              document.getElementById("containingAlcohol").value || null,
-            animalProduct:
-              document.getElementById("animalProduct").value || null,
-            notConsideredAlcohol:
-              document.getElementById("notConsideredAlcohol").value || null,
-          };
-
-          try {
-            const res = await fetch(
-              `https://chat-bot-api-126af91abc14.herokuapp.com/helal-kontrol`,
-              {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-              }
-            );
-
-            const result = await res.json();
-            document.getElementById("response").innerText =
-              "Güncellendi:\n" + JSON.stringify(result, null, 2);
-          } catch (err) {
-            document.getElementById("response").innerText =
-              "Güncelleme hatası: " + err.message;
+        
+        // Sisteme Giriş butonuna tıklandığında şifre formunu göster
+        document.getElementById('loginButton').addEventListener('click', function() {
+          document.getElementById('loginButton').style.display = 'none';
+          document.getElementById('passwordForm').style.display = 'block';
+          document.getElementById('passwordInput').focus();
+        });
+        
+        // Şifre giriş formunu gönderme işlemi
+        document.getElementById('submitPassword').addEventListener('click', submitPassword);
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            submitPassword();
           }
         });
-
-      // Sayfa yüklendiğinde verileri çek
-      window.addEventListener("DOMContentLoaded", fetchAndFillData);
+        
+        // Şifre kontrolü ve giriş işlemi
+        function submitPassword() {
+          const password = document.getElementById('passwordInput').value;
+          
+          if (login(password)) {
+            // Başarılı giriş, app.html'e yönlendir
+            window.location.href = 'app.html';
+          } else {
+            // Hatalı şifre mesajını göster
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+          }
+        }
+      });
     </script>
   </body>
 </html>
