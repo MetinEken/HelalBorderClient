@@ -23,6 +23,7 @@
         background-color: #f2f4f8;
         margin: 0;
         padding: 0;
+        overflow-y: auto;
       }
 
       .header {
@@ -87,6 +88,8 @@
       .tab-content {
         display: none;
         padding: 2rem;
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
       }
 
       .tab-content.active {
@@ -155,6 +158,89 @@
         padding: 3rem;
         color: #666;
       }
+      
+      /* Barcode Kelimeler bölümü için stiller */
+      .barcode-container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      
+      .sub-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .sub-tab {
+        padding: 0.8rem 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 500;
+        text-align: center;
+        flex: 1;
+        min-width: 120px;
+        font-size: 0.9rem;
+      }
+      
+      .sub-tab:hover {
+        background-color: #e0e0e0;
+      }
+      
+      .sub-tab.active {
+        background-color: #fff;
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+      }
+      
+      .sub-tab-content {
+        display: none;
+        padding: 1.5rem;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        max-height: calc(100vh - 300px);
+        overflow-y: auto;
+      }
+      
+      .sub-tab-content.active {
+        display: block;
+      }
+      
+      .content-box {
+        margin-bottom: 2rem;
+      }
+      
+      .content-box h3 {
+        margin-bottom: 1rem;
+        color: #333;
+      }
+      
+      .content-box textarea {
+        width: 100%;
+        min-height: 200px;
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+      }
+      
+      .save-button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      
+      .save-button:hover {
+        background-color: #218838;
+      }
     </style>
   </head>
   <body>
@@ -209,9 +295,81 @@
 
       <!-- Tab 2: Barcode Kelimeler -->
       <div id="tab2" class="tab-content">
-        <div class="empty-tab">
+        <div class="barcode-container">
           <h2>Barcode Kelimeler</h2>
-          <p>Bu bölüm henüz hazırlanmaktadır.</p>
+          
+          <!-- Barcode Kelimeler için alt tablar -->
+          <div class="sub-tabs">
+            <div class="sub-tab active" data-subtab="subtab1">Alkol İçerik</div>
+            <div class="sub-tab" data-subtab="subtab2">Hayvansal İçerik</div>
+            <div class="sub-tab" data-subtab="subtab3">E-Code</div>
+            <div class="sub-tab" data-subtab="subtab4">Non-Alkol</div>
+            <div class="sub-tab" data-subtab="subtab5">Domuz-Ürünleri</div>
+            <div class="sub-tab" data-subtab="subtab6">Helal-Hayvansal</div>
+          </div>
+          
+          <!-- Alt tab içerikleri -->
+          <div class="sub-tab-contents">
+            <!-- Alkol İçerik -->
+            <div id="subtab1" class="sub-tab-content active">
+              <div class="content-box">
+                <h3>Alkol İçeren Maddeler</h3>
+                <p>Bu bölümde alkol içeren maddelerin listesi yer alacaktır.</p>
+                <textarea id="alcoholContent" placeholder="Alkol içeren maddeleri buraya ekleyin..."></textarea>
+                <button class="save-button">Kaydet</button>
+              </div>
+            </div>
+            
+            <!-- Hayvansal İçerik -->
+            <div id="subtab2" class="sub-tab-content">
+              <div class="content-box">
+                <h3>Hayvansal İçerikler</h3>
+                <p>Bu bölümde hayvansal içeriklerin listesi yer alacaktır.</p>
+                <textarea id="animalContent" placeholder="Hayvansal içerikleri buraya ekleyin..."></textarea>
+                <button class="save-button">Kaydet</button>
+              </div>
+            </div>
+            
+            <!-- E-Code -->
+            <div id="subtab3" class="sub-tab-content">
+              <div class="content-box">
+                <h3>E-Kodlar</h3>
+                <p>Bu bölümde E-Kodların listesi yer alacaktır.</p>
+                <textarea id="eCodeContent" placeholder="E-Kodları buraya ekleyin..."></textarea>
+                <button class="save-button">Kaydet</button>
+              </div>
+            </div>
+            
+            <!-- Non-Alkol -->
+            <div id="subtab4" class="sub-tab-content">
+              <div class="content-box">
+                <h3>Non-Alkol İçerikler</h3>
+                <p>Bu bölümde alkol sayılmayan maddelerin listesi yer alacaktır.</p>
+                <textarea id="nonAlcoholContent" placeholder="Alkol sayılmayan maddeleri buraya ekleyin..."></textarea>
+                <button class="save-button">Kaydet</button>
+              </div>
+            </div>
+            
+            <!-- Domuz-Ürünleri -->
+            <div id="subtab5" class="sub-tab-content">
+              <div class="content-box">
+                <h3>Domuz Ürünleri</h3>
+                <p>Bu bölümde domuz ürünlerinin listesi yer alacaktır.</p>
+                <textarea id="porkContent" placeholder="Domuz ürünlerini buraya ekleyin..."></textarea>
+                <button class="save-button">Kaydet</button>
+              </div>
+            </div>
+            
+            <!-- Helal-Hayvansal -->
+            <div id="subtab6" class="sub-tab-content">
+              <div class="content-box">
+                <h3>Helal Hayvansal Ürünler</h3>
+                <p>Bu bölümde helal hayvansal ürünlerin listesi yer alacaktır.</p>
+                <textarea id="halalAnimalContent" placeholder="Helal hayvansal ürünleri buraya ekleyin..."></textarea>
+                <button class="save-button">Kaydet</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -237,6 +395,8 @@
       document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
+        const subTabs = document.querySelectorAll('.sub-tab');
+        const subTabContents = document.querySelectorAll('.sub-tab-content');
         
         // İlk açılışta 4. tab'ı aktif yap
         activateTab('tab4');
@@ -248,6 +408,14 @@
           });
         });
         
+        // Alt tablar için tıklama olayı
+        subTabs.forEach(subTab => {
+          subTab.addEventListener('click', function() {
+            const subTabId = this.getAttribute('data-subtab');
+            activateSubTab(subTabId);
+          });
+        });
+        
         function activateTab(tabId) {
           // Tüm tabları ve içeriklerini deaktif yap
           tabs.forEach(tab => tab.classList.remove('active'));
@@ -256,6 +424,21 @@
           // Seçilen tabı ve içeriğini aktif yap
           document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
           document.getElementById(tabId).classList.add('active');
+          
+          // Eğer Barcode Kelimeler tabı seçildiyse, ilk alt tabı aktif yap
+          if (tabId === 'tab2') {
+            activateSubTab('subtab1');
+          }
+        }
+        
+        function activateSubTab(subTabId) {
+          // Tüm alt tabları ve içeriklerini deaktif yap
+          subTabs.forEach(subTab => subTab.classList.remove('active'));
+          subTabContents.forEach(content => content.classList.remove('active'));
+          
+          // Seçilen alt tabı ve içeriğini aktif yap
+          document.querySelector(`.sub-tab[data-subtab="${subTabId}"]`).classList.add('active');
+          document.getElementById(subTabId).classList.add('active');
         }
         
         // Formalize Et butonuna tıklanınca çalışacak fonksiyon
