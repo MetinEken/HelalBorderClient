@@ -241,6 +241,207 @@
       .save-button:hover {
         background-color: #218838;
       }
+      
+      /* Token Kullanım bölümü için stiller */
+      .token-container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      
+      .token-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      
+      .stat-box {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        text-align: center;
+        min-width: 200px;
+        margin: 1rem;
+      }
+      
+      .stat-box h3 {
+        margin-top: 0;
+        color: #333;
+        font-size: 1.2rem;
+      }
+      
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-top: 1rem;
+      }
+      
+      .token-table-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        overflow-x: auto;
+      }
+      
+      .token-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .token-table th,
+      .token-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .token-table th {
+        background-color: #f5f5f5;
+        font-weight: 600;
+        color: #333;
+      }
+      
+      .token-table tbody tr:hover {
+        background-color: #f9f9f9;
+      }
+      
+      .loading-message {
+        text-align: center;
+        color: #666;
+        padding: 2rem;
+      }
+      
+      /* Grafik stilleri */
+      .chart-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      
+      .chart-container h3 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: #333;
+      }
+      
+      .chart {
+        height: 250px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        padding: 0 1rem;
+        border-bottom: 2px solid #ddd;
+        position: relative;
+      }
+      
+      .chart::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: #ddd;
+      }
+      
+      .chart-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #666;
+      }
+      
+      .chart-bar-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 12%;
+      }
+      
+      .chart-date {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 0.5rem;
+        text-align: center;
+        transform: rotate(-45deg);
+        white-space: nowrap;
+        width: 100%;
+        height: 40px;
+      }
+      
+      .chart-bars {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      
+      .chart-bar {
+        width: 40%;
+        margin: 0 5%;
+        transition: height 0.3s ease;
+      }
+      
+      .token-bar {
+        background-color: #007bff;
+      }
+      
+      .check-bar {
+        background-color: #28a745;
+      }
+      
+      .chart-legend {
+        display: flex;
+        justify-content: center;
+        margin-top: 3rem;
+      }
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin: 0 1rem;
+      }
+      
+      .legend-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+        border-radius: 4px;
+      }
+      
+      .token-color {
+        background-color: #007bff;
+      }
+      
+      .check-color {
+        background-color: #28a745;
+      }
+      
+      .chart-y-axis {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+      
+      .y-axis-label {
+        font-size: 0.7rem;
+        color: #666;
+        transform: translateX(-50%);
+        text-align: right;
+      }
     </style>
   </head>
   <body>
@@ -375,9 +576,56 @@
 
       <!-- Tab 3: Token Kullanım -->
       <div id="tab3" class="tab-content">
-        <div class="empty-tab">
+        <div class="token-container">
           <h2>Token Kullanım</h2>
-          <p>Bu bölüm henüz hazırlanmaktadır.</p>
+          
+          <!-- Toplam İstatistikler -->
+          <div class="token-stats">
+            <div class="stat-box">
+              <h3>Toplam Token Sayısı</h3>
+              <div class="stat-value" id="totalTokenSum">Yükleniyor...</div>
+            </div>
+            <div class="stat-box">
+              <h3>Toplam Kontrol Sayısı</h3>
+              <div class="stat-value" id="totalCheckCallSum">Yükleniyor...</div>
+            </div>
+          </div>
+          
+          <!-- Son 1 Haftalık Grafik -->
+          <div class="chart-container">
+            <h3>Son 1 Haftalık Token Kullanımı</h3>
+            <div class="chart" id="tokenChart">
+              <div class="chart-loading">Grafik yükleniyor...</div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-color token-color"></div>
+                <div>Token Sayısı</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color check-color"></div>
+                <div>Kontrol Sayısı</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Token Kullanım Tablosu -->
+          <div class="token-table-container">
+            <table class="token-table">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Token Sayısı</th>
+                  <th>Kontrol Sayısı</th>
+                </tr>
+              </thead>
+              <tbody id="tokenTableBody">
+                <tr>
+                  <td colspan="3" class="loading-message">Veriler yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -543,9 +791,204 @@
         // Yapay Zeka Kelimeleri tabı aktif olduğunda verileri çek
         document.querySelector('.tab[data-tab="tab1"]').addEventListener('click', fetchAndFillData);
         
-        // Sayfa yüklendiğinde verileri çek (eğer Yapay Zeka Kelimeleri tabı aktifse)
+        // Token Kullanım tabı aktif olduğunda verileri çek
+        document.querySelector('.tab[data-tab="tab3"]').addEventListener('click', fetchTokenUsageData);
+        
+        // Token kullanım verilerini çek ve tabloya yerleştir
+        async function fetchTokenUsageData() {
+          try {
+            const tokenTableBody = document.getElementById('tokenTableBody');
+            const totalTokenSum = document.getElementById('totalTokenSum');
+            const totalCheckCallSum = document.getElementById('totalCheckCallSum');
+            const tokenChart = document.getElementById('tokenChart');
+            
+            // Yükleniyor mesajını göster
+            tokenTableBody.innerHTML = '<tr><td colspan="3" class="loading-message">Veriler yükleniyor...</td></tr>';
+            totalTokenSum.innerText = 'Yükleniyor...';
+            totalCheckCallSum.innerText = 'Yükleniyor...';
+            tokenChart.innerHTML = '<div class="chart-loading">Grafik yükleniyor...</div>';
+            
+            // API'den verileri çek
+            const response = await fetch(`${BASE_URL}/used-stor`);
+            
+            if (!response.ok) {
+              throw new Error('Veriler alınırken bir hata oluştu');
+            }
+            
+            const data = await response.json();
+            
+            // Verileri tarihe göre sırala (en yeniden en eskiye)
+            data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            // Toplam değerleri hesapla
+            let tokenSumTotal = 0;
+            let checkCallSumTotal = 0;
+            
+            data.forEach(item => {
+              tokenSumTotal += item.totalTokenCount;
+              checkCallSumTotal += item.checkCallCount;
+            });
+            
+            // Toplam değerleri göster
+            totalTokenSum.innerText = tokenSumTotal.toLocaleString();
+            totalCheckCallSum.innerText = checkCallSumTotal.toLocaleString();
+            
+            // Son 7 gün için tarih aralığı oluştur (bugün dahil)
+            const today = new Date();
+            today.setHours(23, 59, 59, 999); // Bugünün sonuna ayarla
+            
+            const oneWeekAgo = new Date(today);
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 6); // 7 gün için 6 gün öncesi
+            oneWeekAgo.setHours(0, 0, 0, 0); // Günün başına ayarla
+            
+            // Son 7 gün için boş günlük veri yapısı oluştur
+            const dailyData = {};
+            
+            // Son 7 günün her biri için boş kayıtlar oluştur
+            for (let i = 0; i < 7; i++) {
+              const date = new Date(oneWeekAgo);
+              date.setDate(date.getDate() + i);
+              const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD formatında
+              
+              dailyData[dateStr] = {
+                date: new Date(date),
+                totalTokenCount: 0,
+                checkCallCount: 0
+              };
+            }
+            
+            // Tarih karşılaştırma için yardımcı fonksiyon
+            function isSameDay(date1, date2) {
+              return date1.getFullYear() === date2.getFullYear() &&
+                     date1.getMonth() === date2.getMonth() &&
+                     date1.getDate() === date2.getDate();
+            }
+            
+            // Son 7 gün içindeki verileri filtrele
+            const lastWeekData = data.filter(item => {
+              const itemDate = new Date(item.createdAt);
+              
+              // Son 7 gün içindeki herhangi bir güne ait mi kontrol et
+              for (let i = 0; i < 7; i++) {
+                const checkDate = new Date(oneWeekAgo);
+                checkDate.setDate(checkDate.getDate() + i);
+                
+                if (isSameDay(itemDate, checkDate)) {
+                  return true;
+                }
+              }
+              
+              return false;
+            });
+            
+            // Verileri günlere göre grupla
+            lastWeekData.forEach(item => {
+              // Tarih karşılaştırma için her bir günü kontrol et
+              for (const dateStr in dailyData) {
+                const currentDate = dailyData[dateStr].date;
+                const itemDate = new Date(item.createdAt);
+                
+                if (isSameDay(currentDate, itemDate)) {
+                  dailyData[dateStr].totalTokenCount += item.totalTokenCount;
+                  dailyData[dateStr].checkCallCount += item.checkCallCount;
+                  break;
+                }
+              }
+            });
+            
+            // Günlük verileri diziye dönüştür ve tarihe göre sırala
+            const dailyDataArray = Object.values(dailyData);
+            dailyDataArray.sort((a, b) => a.date - b.date);
+            
+            // Grafik için maksimum değeri bul (10000'in katları olacak şekilde)
+            let maxTokenCount = Math.max(...dailyDataArray.map(item => item.totalTokenCount), 10000);
+            maxTokenCount = Math.ceil(maxTokenCount / 10000) * 10000;
+            
+            // Grafik için Y ekseni etiketlerini oluştur
+            const yAxisLabels = [];
+            for (let i = 0; i <= 5; i++) {
+              yAxisLabels.push(Math.round(maxTokenCount * i / 5).toLocaleString());
+            }
+            
+            // Grafik içeriğini oluştur
+            let chartHTML = `
+              <div class="chart-y-axis">
+                ${yAxisLabels.reverse().map(label => `<div class="y-axis-label">${label}</div>`).join('')}
+              </div>
+            `;
+            
+            // Eğer veri yoksa mesaj göster
+            if (dailyDataArray.length === 0) {
+              tokenChart.innerHTML = '<div class="chart-loading">Son 1 hafta için veri bulunamadı</div>';
+            } else {
+              // Her gün için sütunları oluştur
+              dailyDataArray.forEach(dayData => {
+                const tokenBarHeight = (dayData.totalTokenCount / maxTokenCount) * 100;
+                const checkBarHeight = (dayData.checkCallCount / maxTokenCount) * 100;
+                
+                const formattedDate = dayData.date.toLocaleDateString('tr-TR', {
+                  day: 'numeric',
+                  month: 'short'
+                }) + (isSameDay(dayData.date, new Date()) ? ' (Bugün)' : '');
+                
+                chartHTML += `
+                  <div class="chart-bar-group">
+                    <div class="chart-bars">
+                      <div class="chart-bar token-bar" style="height: ${tokenBarHeight}%" title="${dayData.totalTokenCount.toLocaleString()} token"></div>
+                      <div class="chart-bar check-bar" style="height: ${checkBarHeight}%" title="${dayData.checkCallCount.toLocaleString()} kontrol"></div>
+                    </div>
+                    <div class="chart-date">${formattedDate}</div>
+                  </div>
+                `;
+              });
+              
+              tokenChart.innerHTML = chartHTML;
+            }
+            
+            // Tablo içeriğini oluştur
+            if (data.length === 0) {
+              tokenTableBody.innerHTML = '<tr><td colspan="3" class="loading-message">Veri bulunamadı</td></tr>';
+            } else {
+              tokenTableBody.innerHTML = '';
+              
+              data.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Tarihi formatla
+                const date = new Date(item.createdAt);
+                const formattedDate = date.toLocaleDateString('tr-TR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                });
+                
+                row.innerHTML = `
+                  <td>${formattedDate}</td>
+                  <td>${item.totalTokenCount.toLocaleString()}</td>
+                  <td>${item.checkCallCount.toLocaleString()}</td>
+                `;
+                
+                tokenTableBody.appendChild(row);
+              });
+            }
+          } catch (error) {
+            console.error('Token kullanım verileri alınırken hata:', error);
+            document.getElementById('tokenTableBody').innerHTML = 
+              `<tr><td colspan="3" class="loading-message">Hata: ${error.message}</td></tr>`;
+            document.getElementById('totalTokenSum').innerText = 'Hata';
+            document.getElementById('totalCheckCallSum').innerText = 'Hata';
+            document.getElementById('tokenChart').innerHTML = 
+              `<div class="chart-loading">Hata: ${error.message}</div>`;
+          }
+        }
+        
+        // Sayfa yüklendiğinde verileri çek (hangi tab aktifse)
         if (document.querySelector('.tab[data-tab="tab1"]').classList.contains('active')) {
           fetchAndFillData();
+        } else if (document.querySelector('.tab[data-tab="tab3"]').classList.contains('active')) {
+          fetchTokenUsageData();
         }
       });
     </script>
