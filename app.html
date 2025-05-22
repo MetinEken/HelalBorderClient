@@ -52,12 +52,14 @@
       }
 
       .tab-container {
-        max-width: 1200px;
+        width: calc(100% - 100px);
+        max-width: calc(100% - 100px);
         margin: 2rem auto;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        padding: 0 50px;
       }
 
       .tabs {
@@ -87,9 +89,10 @@
 
       .tab-content {
         display: none;
-        padding: 2rem;
+        padding: 2rem 0;
         max-height: calc(100vh - 180px);
         overflow-y: auto;
+        width: 100%;
       }
 
       .tab-content.active {
@@ -161,8 +164,15 @@
       
       /* Barcode Kelimeler bölümü için stiller */
       .barcode-container {
-        max-width: 900px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .barcode-container h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
       }
       
       .sub-tabs {
@@ -172,6 +182,8 @@
         border-bottom: 1px solid #ddd;
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
+        padding: 0;
+        width: 100%;
       }
       
       .sub-tab {
@@ -197,12 +209,13 @@
       
       .sub-tab-content {
         display: none;
-        padding: 1.5rem;
         background-color: #fff;
+        padding: 1.5rem 0;
         border-radius: 4px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         max-height: calc(100vh - 300px);
         overflow-y: auto;
+        width: 100%;
       }
       
       .sub-tab-content.active {
@@ -211,11 +224,14 @@
       
       .content-box {
         margin-bottom: 2rem;
+        width: 100%;
+        padding: 0 50px;
       }
       
       .content-box h3 {
         margin-bottom: 1rem;
         color: #333;
+        text-align: center;
       }
       
       .content-box textarea {
@@ -442,6 +458,266 @@
         transform: translateX(-50%);
         text-align: right;
       }
+      
+      /* Alkol İçerik tablosu için stiller */
+      .alkol-icerik-wrapper {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 20px 50px;
+        overflow-x: auto;
+        width: 90%;
+        margin: 0 auto;
+      }
+      
+      .alkol-icerik-wrapper .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      
+      .alkol-icerik-wrapper .actions-container {
+        display: flex;
+        align-items: center;
+      }
+      
+      .alkol-icerik-wrapper .add-new-btn {
+        display: flex;
+        align-items: center;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        margin-right: 20px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+      }
+      
+      .alkol-icerik-wrapper .add-new-btn:hover {
+        background-color: #218838;
+      }
+      
+      .alkol-icerik-wrapper .add-new-btn i {
+        margin-right: 5px;
+      }
+      
+      .alkol-icerik-wrapper .header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #333;
+      }
+      
+      .alkol-icerik-wrapper .stats {
+        display: flex;
+        align-items: center;
+      }
+      
+      .alkol-icerik-wrapper .stat-item {
+        margin-left: 20px;
+        text-align: center;
+      }
+      
+      .alkol-icerik-wrapper .stat-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #007bff;
+      }
+      
+      .alkol-icerik-wrapper .stat-label {
+        font-size: 0.8rem;
+        color: #666;
+      }
+      
+      .alkol-icerik-wrapper .table-container {
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        overflow-x: auto;
+      }
+      
+      .alkol-icerik-wrapper table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .alkol-icerik-wrapper th, 
+      .alkol-icerik-wrapper td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        min-width: 150px;
+      }
+      
+      .alkol-icerik-wrapper th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: 500;
+        position: sticky;
+        top: 0;
+      }
+      
+      .alkol-icerik-wrapper tr:hover {
+        background-color: #f5f5f5;
+      }
+      
+      .alkol-icerik-wrapper .action-cell {
+        white-space: nowrap;
+        width: 100px;
+        min-width: 100px;
+      }
+      
+      .alkol-icerik-wrapper .edit-btn, 
+      .alkol-icerik-wrapper .save-btn, 
+      .alkol-icerik-wrapper .cancel-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-right: 5px;
+        padding: 5px;
+        border-radius: 3px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .alkol-icerik-wrapper .edit-btn {
+        color: #007bff;
+      }
+      
+      .alkol-icerik-wrapper .save-btn {
+        color: #28a745;
+      }
+      
+      .alkol-icerik-wrapper .cancel-btn {
+        color: #dc3545;
+      }
+      
+      .alkol-icerik-wrapper .edit-btn:hover, 
+      .alkol-icerik-wrapper .save-btn:hover, 
+      .alkol-icerik-wrapper .cancel-btn:hover {
+        background-color: rgba(0,0,0,0.05);
+      }
+      
+      .alkol-icerik-wrapper .edit-mode input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      
+      .alkol-icerik-wrapper .edit-mode {
+        background-color: #fff8e1;
+      }
+      
+      .alkol-icerik-wrapper .loading {
+        text-align: center;
+        padding: 20px;
+        font-style: italic;
+        color: #666;
+      }
+      
+      .alkol-icerik-wrapper .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+      }
+      
+      .alkol-icerik-wrapper .success {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+      }
+      
+      .alkol-icerik-wrapper .hidden {
+        display: none;
+      }
+      
+      /* Yeni Kayıt Formu Stilleri */
+      .new-word-form-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      
+      .new-word-form {
+        width: 100%;
+      }
+      
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        justify-content: space-between;
+      }
+      
+      .form-group {
+        flex: 0 0 150px;
+        margin-bottom: 15px;
+        margin-right: 10px;
+      }
+      
+      .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      
+      .form-group textarea {
+        width: 150px;
+        height: 100px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: none;
+      }
+      
+      .form-buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+      
+      .save-new-btn, .cancel-new-btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        margin-top: 5px;
+      }
+      
+      .save-new-btn {
+        background-color: #28a745;
+        color: white;
+      }
+      
+      .save-new-btn:hover {
+        background-color: #218838;
+      }
+      
+      .cancel-new-btn {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      .cancel-new-btn:hover {
+        background-color: #c82333;
+      }
     </style>
   </head>
   <body>
@@ -486,6 +762,13 @@
             <label for="notConsideredAlcohol">Alkol Sayılmayanlar:</label>
             <textarea id="notConsideredAlcohol"></textarea>
 
+            <h3>Barcode Talimatlari</h3>
+            <label for="barcodeBaseTalimat">Barcode Base Talimat:</label>
+            <textarea id="barcodeBaseTalimat"></textarea>
+
+            <label for="barcodeDetayliTalimat">Barcode Detaylı Talimat:</label>
+            <textarea id="barcodeDetayliTalimat"></textarea>
+
             <button type="submit">Güncelle</button>
           </form>
 
@@ -513,11 +796,153 @@
           <div class="sub-tab-contents">
             <!-- Alkol İçerik -->
             <div id="subtab1" class="sub-tab-content active">
-              <div class="content-box">
+              <div class="content-box" id="alkolIcerikContainer" style="width: 100%; max-width: 100%;">
                 <h3>Alkol İçeren Maddeler</h3>
-                <p>Bu bölümde alkol içeren maddelerin listesi yer alacaktır.</p>
-                <textarea id="alcoholContent" placeholder="Alkol içeren maddeleri buraya ekleyin..."></textarea>
-                <button class="save-button">Kaydet</button>
+                <div class="alkol-icerik-wrapper">
+                  <div class="header">
+                    <h3>Alkol İçerik Yönetimi</h3>
+                    <div class="actions-container">
+                      <button id="addNewWordBtn" class="add-new-btn">
+                        <i class="material-icons">add</i> Yeni Kayıt
+                      </button>
+                      <div class="stats">
+                        <div class="stat-item">
+                          <div class="stat-value" id="totalItems">0</div>
+                          <div class="stat-label">Toplam Kayıt</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="notification" class="hidden"></div>
+                  
+                  <div id="newWordFormContainer" class="new-word-form-container hidden">
+                    <div class="new-word-form">
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="newEn">EN</label>
+                          <textarea id="newEn" name="en" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newTr">TR</label>
+                          <textarea id="newTr" name="tr" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newDe">DE</label>
+                          <textarea id="newDe" name="de" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newFr">FR</label>
+                          <textarea id="newFr" name="fr" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newIt">IT</label>
+                          <textarea id="newIt" name="it" rows="4"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="newEs">ES</label>
+                          <textarea id="newEs" name="es" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newPt">PT</label>
+                          <textarea id="newPt" name="pt" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newNl">NL</label>
+                          <textarea id="newNl" name="nl" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newPl">PL</label>
+                          <textarea id="newPl" name="pl" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newSe">SE</label>
+                          <textarea id="newSe" name="se" rows="4"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="newNo">NO</label>
+                          <textarea id="newNo" name="no" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newDk">DK</label>
+                          <textarea id="newDk" name="dk" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newFi">FI</label>
+                          <textarea id="newFi" name="fi" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newRu">RU</label>
+                          <textarea id="newRu" name="ru" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newUa">UA</label>
+                          <textarea id="newUa" name="ua" rows="4"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="newRo">RO</label>
+                          <textarea id="newRo" name="ro" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newGr">GR</label>
+                          <textarea id="newGr" name="gr" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newHu">HU</label>
+                          <textarea id="newHu" name="hu" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="newCz">CZ</label>
+                          <textarea id="newCz" name="cz" rows="4"></textarea>
+                        </div>
+                        <div class="form-group form-buttons">
+                          <button id="saveNewWordBtn" class="save-new-btn">Kaydet</button>
+                          <button id="cancelNewWordBtn" class="cancel-new-btn">İptal</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="table-container">
+                    <table id="alkolTable">
+                      <thead>
+                        <tr>
+                          <th class="action-cell">İşlemler</th>
+                          <th>EN</th>
+                          <th>TR</th>
+                          <th>DE</th>
+                          <th>FR</th>
+                          <th>IT</th>
+                          <th>ES</th>
+                          <th>PT</th>
+                          <th>NL</th>
+                          <th>PL</th>
+                          <th>SE</th>
+                          <th>NO</th>
+                          <th>DK</th>
+                          <th>FI</th>
+                          <th>RU</th>
+                          <th>UA</th>
+                          <th>RO</th>
+                          <th>GR</th>
+                          <th>HU</th>
+                          <th>CZ</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tableBody">
+                        <tr>
+                          <td colspan="20" class="loading">Veriler yükleniyor...</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -740,6 +1165,10 @@
               data.animalProduct || "";
             document.getElementById("notConsideredAlcohol").value =
               data.notConsideredAlcohol || "";
+            document.getElementById("barcodeBaseTalimat").value =
+              data.barcodeBaseTalimat || "";
+            document.getElementById("barcodeDetayliTalimat").value =
+              data.barcodeDetayliTalimat || "";
 
             document.getElementById("response").innerText = "Veriler yüklendi.";
           } catch (err) {
@@ -765,6 +1194,10 @@
                 document.getElementById("animalProduct").value || null,
               notConsideredAlcohol:
                 document.getElementById("notConsideredAlcohol").value || null,
+              barcodeBaseTalimat:
+                document.getElementById("barcodeBaseTalimat").value || null,
+              barcodeDetayliTalimat:
+                document.getElementById("barcodeDetayliTalimat").value || null,
             };
 
             try {
@@ -984,12 +1417,311 @@
           }
         }
         
+        // Alkol İçerik tablosu için fonksiyonlar
+        async function fetchAlkolData() {
+          try {
+            const response = await fetch(`${BASE_URL}/alkol-maddeleri`);
+            
+            if (!response.ok) {
+              throw new Error('Veriler alınırken bir hata oluştu');
+            }
+            
+            const data = await response.json();
+            
+            // Toplam kayıt sayısını güncelle
+            document.getElementById('totalItems').textContent = data.length;
+            
+            // Tabloyu doldur
+            renderAlkolTable(data);
+          } catch (error) {
+            console.error('Veri çekme hatası:', error);
+            showAlkolNotification('error', `Hata: ${error.message}`);
+            document.getElementById('tableBody').innerHTML = `
+              <tr>
+                <td colspan="20" class="error">Veriler yüklenemedi: ${error.message}</td>
+              </tr>
+            `;
+          }
+        }
+        
+        // Tabloyu oluştur
+        function renderAlkolTable(data) {
+          const tableBody = document.getElementById('tableBody');
+          
+          if (data.length === 0) {
+            tableBody.innerHTML = `
+              <tr>
+                <td colspan="20" class="loading">Kayıt bulunamadı</td>
+              </tr>
+            `;
+            return;
+          }
+          
+          tableBody.innerHTML = '';
+          
+          data.forEach(item => {
+            const row = document.createElement('tr');
+            row.dataset.id = item.id;
+            
+            row.innerHTML = `
+              <td class="action-cell">
+                <button class="edit-btn" onclick="editRow('${item.id}')">
+                  <i class="material-icons">edit</i>
+                </button>
+                <button class="save-btn hidden" onclick="saveRow('${item.id}')">
+                  <i class="material-icons">save</i>
+                </button>
+                <button class="cancel-btn hidden" onclick="cancelEdit('${item.id}')">
+                  <i class="material-icons">close</i>
+                </button>
+              </td>
+              <td data-field="en">${item.en || ''}</td>
+              <td data-field="tr">${item.tr || ''}</td>
+              <td data-field="de">${item.de || ''}</td>
+              <td data-field="fr">${item.fr || ''}</td>
+              <td data-field="it">${item.it || ''}</td>
+              <td data-field="es">${item.es || ''}</td>
+              <td data-field="pt">${item.pt || ''}</td>
+              <td data-field="nl">${item.nl || ''}</td>
+              <td data-field="pl">${item.pl || ''}</td>
+              <td data-field="se">${item.se || ''}</td>
+              <td data-field="no">${item.no || ''}</td>
+              <td data-field="dk">${item.dk || ''}</td>
+              <td data-field="fi">${item.fi || ''}</td>
+              <td data-field="ru">${item.ru || ''}</td>
+              <td data-field="ua">${item.ua || ''}</td>
+              <td data-field="ro">${item.ro || ''}</td>
+              <td data-field="gr">${item.gr || ''}</td>
+              <td data-field="hu">${item.hu || ''}</td>
+              <td data-field="cz">${item.cz || ''}</td>
+            `;
+            
+            tableBody.appendChild(row);
+          });
+        }
+        
+        // Satırı düzenleme moduna geçir
+        function editRow(id) {
+          const row = document.querySelector(`tr[data-id="${id}"]`);
+          
+          // Düzenleme modunu etkinleştir
+          row.classList.add('edit-mode');
+          
+          // Butonları değiştir
+          row.querySelector('.edit-btn').classList.add('hidden');
+          row.querySelector('.save-btn').classList.remove('hidden');
+          row.querySelector('.cancel-btn').classList.remove('hidden');
+          
+          // Hücreleri input'a dönüştür
+          const cells = row.querySelectorAll('td[data-field]');
+          cells.forEach(cell => {
+            const field = cell.getAttribute('data-field');
+            const value = cell.textContent;
+            
+            // Orijinal değeri sakla
+            cell.dataset.originalValue = value;
+            
+            // Input oluştur
+            cell.innerHTML = `<input type="text" name="${field}" value="${value}">`;
+          });
+        }
+        
+        // Değişiklikleri kaydet
+        async function saveRow(id) {
+          const row = document.querySelector(`tr[data-id="${id}"]`);
+          
+          // Değerleri topla
+          const data = {
+            id: id
+          };
+          
+          const inputs = row.querySelectorAll('input');
+          inputs.forEach(input => {
+            data[input.name] = input.value;
+          });
+          
+          try {
+            // API'ye gönder
+            const response = await fetch(`${BASE_URL}/alkol-maddeleri`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+              throw new Error('Güncelleme sırasında bir hata oluştu');
+            }
+            
+            const result = await response.json();
+            
+            // Düzenleme modundan çık
+            exitEditMode(row, result);
+            
+            // Başarı mesajı göster
+            showAlkolNotification('success', 'Kayıt başarıyla güncellendi');
+          } catch (error) {
+            console.error('Güncelleme hatası:', error);
+            showAlkolNotification('error', `Hata: ${error.message}`);
+          }
+        }
+        
+        // Düzenlemeyi iptal et
+        function cancelEdit(id) {
+          const row = document.querySelector(`tr[data-id="${id}"]`);
+          
+          // Hücreleri orijinal değerlerine geri döndür
+          const cells = row.querySelectorAll('td[data-field]');
+          cells.forEach(cell => {
+            const originalValue = cell.dataset.originalValue || '';
+            cell.textContent = originalValue;
+          });
+          
+          // Düzenleme modundan çık
+          row.classList.remove('edit-mode');
+          
+          // Butonları geri al
+          row.querySelector('.edit-btn').classList.remove('hidden');
+          row.querySelector('.save-btn').classList.add('hidden');
+          row.querySelector('.cancel-btn').classList.add('hidden');
+        }
+        
+        // Düzenleme modundan çık ve yeni değerleri göster
+        function exitEditMode(row, data) {
+          // Düzenleme modunu kapat
+          row.classList.remove('edit-mode');
+          
+          // Butonları geri al
+          row.querySelector('.edit-btn').classList.remove('hidden');
+          row.querySelector('.save-btn').classList.add('hidden');
+          row.querySelector('.cancel-btn').classList.add('hidden');
+          
+          // Hücreleri güncelle
+          const cells = row.querySelectorAll('td[data-field]');
+          cells.forEach(cell => {
+            const field = cell.getAttribute('data-field');
+            cell.textContent = data[field] || '';
+          });
+        }
+        
+        // Bildirim göster
+        function showAlkolNotification(type, message) {
+          const notification = document.getElementById('notification');
+          notification.className = type; // error veya success
+          notification.textContent = message;
+          notification.classList.remove('hidden');
+          
+          // 3 saniye sonra bildirim kaybolsun
+          setTimeout(() => {
+            notification.classList.add('hidden');
+          }, 3000);
+        }
+
+        // Yeni kayıt formu göster/gizle
+        function toggleNewWordForm() {
+          const formContainer = document.getElementById('newWordFormContainer');
+          formContainer.classList.toggle('hidden');
+        }
+        
+        // Yeni kayıt ekleme fonksiyonu
+        async function saveNewWord() {
+          try {
+            // Form verilerini topla
+            const newData = {
+              en: document.getElementById('newEn').value,
+              tr: document.getElementById('newTr').value,
+              de: document.getElementById('newDe').value,
+              fr: document.getElementById('newFr').value,
+              it: document.getElementById('newIt').value,
+              es: document.getElementById('newEs').value,
+              pt: document.getElementById('newPt').value,
+              nl: document.getElementById('newNl').value,
+              pl: document.getElementById('newPl').value,
+              se: document.getElementById('newSe').value,
+              no: document.getElementById('newNo').value,
+              dk: document.getElementById('newDk').value,
+              fi: document.getElementById('newFi').value,
+              ru: document.getElementById('newRu').value,
+              ua: document.getElementById('newUa').value,
+              ro: document.getElementById('newRo').value,
+              gr: document.getElementById('newGr').value,
+              hu: document.getElementById('newHu').value,
+              cz: document.getElementById('newCz').value
+            };
+            
+            // API'ye gönder
+            const response = await fetch(`${BASE_URL}/alkol-maddeleri`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(newData)
+            });
+            
+            if (!response.ok) {
+              throw new Error('Yeni kayıt eklenirken bir hata oluştu');
+            }
+            
+            // Başarı mesajı göster
+            showAlkolNotification('success', 'Yeni kayıt başarıyla eklendi');
+            
+            // Formu temizle ve gizle
+            clearNewWordForm();
+            toggleNewWordForm();
+            
+            // Tabloyu yenile
+            fetchAlkolData();
+          } catch (error) {
+            console.error('Yeni kayıt ekleme hatası:', error);
+            showAlkolNotification('error', `Hata: ${error.message}`);
+          }
+        }
+        
+        // Yeni kayıt formunu temizle
+        function clearNewWordForm() {
+          const formInputs = document.querySelectorAll('.new-word-form textarea');
+          formInputs.forEach(input => {
+            input.value = '';
+          });
+        }
+        
+        // Yeni kayıt ekleme butonuna tıklanınca
+        document.getElementById('addNewWordBtn')?.addEventListener('click', toggleNewWordForm);
+        
+        // Kaydet butonuna tıklanınca
+        document.getElementById('saveNewWordBtn')?.addEventListener('click', saveNewWord);
+        
+        // İptal butonuna tıklanınca
+        document.getElementById('cancelNewWordBtn')?.addEventListener('click', function() {
+          clearNewWordForm();
+          toggleNewWordForm();
+        });
+        
         // Sayfa yüklendiğinde verileri çek (hangi tab aktifse)
         if (document.querySelector('.tab[data-tab="tab1"]').classList.contains('active')) {
           fetchAndFillData();
         } else if (document.querySelector('.tab[data-tab="tab3"]').classList.contains('active')) {
           fetchTokenUsageData();
         }
+        
+        // Alkol İçerik tablosu için alt sekme değiştirildiğinde veri çek
+        document.querySelectorAll('.sub-tab').forEach(tab => {
+          tab.addEventListener('click', function() {
+            if (this.dataset.subtab === 'subtab1') {
+              fetchAlkolData();
+            }
+          });
+        });
+        
+        // Ana tab değiştirildiğinde, eğer Barcode Kelimeler tabı açıldıysa ve Alkol İçerik alt tabı aktifse veri çek
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.addEventListener('click', function() {
+            if (this.dataset.tab === 'tab2' && document.querySelector('.sub-tab[data-subtab="subtab1"]').classList.contains('active')) {
+              fetchAlkolData();
+            }
+          });
+        });
       });
     </script>
   </body>
