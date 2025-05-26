@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>Helal Border</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Çevre değişkenleri ve giriş kontrolü için gerekli dosyalar -->
     <script src="env.js"></script>
     <script src="auth.js"></script>
@@ -37,7 +37,7 @@
         justify-content: center;
         align-items: center;
       }
-      
+
       .logout-button {
         position: absolute;
         right: 2rem;
@@ -46,7 +46,7 @@
         align-items: center;
         font-size: 0.9rem;
       }
-      
+
       .logout-button:hover {
         text-decoration: underline;
       }
@@ -108,7 +108,8 @@
         border-radius: 8px;
       }
 
-      h1, h2 {
+      h1,
+      h2 {
         text-align: center;
         color: #333;
         margin-bottom: 1.5rem;
@@ -161,7 +162,7 @@
         padding: 3rem;
         color: #666;
       }
-      
+
       /* Barcode Kelimeler bölümü için stiller */
       .barcode-container {
         width: 100%;
@@ -169,12 +170,12 @@
         margin: 0;
         padding: 0;
       }
-      
+
       .barcode-container h2 {
         text-align: center;
         margin-bottom: 1.5rem;
       }
-      
+
       .sub-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -185,7 +186,7 @@
         padding: 0;
         width: 100%;
       }
-      
+
       .sub-tab {
         padding: 0.8rem 1.2rem;
         cursor: pointer;
@@ -196,17 +197,17 @@
         min-width: 120px;
         font-size: 0.9rem;
       }
-      
+
       .sub-tab:hover {
         background-color: #e0e0e0;
       }
-      
+
       .sub-tab.active {
         background-color: #fff;
         border-bottom: 3px solid #007bff;
         color: #007bff;
       }
-      
+
       .sub-tab-content {
         display: none;
         background-color: #fff;
@@ -217,23 +218,23 @@
         overflow-y: auto;
         width: 100%;
       }
-      
+
       .sub-tab-content.active {
         display: block;
       }
-      
+
       .content-box {
         margin-bottom: 2rem;
         width: 100%;
         padding: 0 50px;
       }
-      
+
       .content-box h3 {
         margin-bottom: 1rem;
         color: #333;
         text-align: center;
       }
-      
+
       .content-box textarea {
         width: 100%;
         min-height: 200px;
@@ -243,7 +244,7 @@
         border-radius: 4px;
         resize: vertical;
       }
-      
+
       .save-button {
         background-color: #28a745;
         color: white;
@@ -253,24 +254,24 @@
         cursor: pointer;
         font-weight: 500;
       }
-      
+
       .save-button:hover {
         background-color: #218838;
       }
-      
+
       /* Token Kullanım bölümü için stiller */
       .token-container {
         max-width: 900px;
         margin: 0 auto;
       }
-      
+
       .token-stats {
         display: flex;
         justify-content: space-around;
         margin-bottom: 2rem;
         flex-wrap: wrap;
       }
-      
+
       .stat-box {
         background-color: #fff;
         border-radius: 8px;
@@ -280,20 +281,20 @@
         min-width: 200px;
         margin: 1rem;
       }
-      
+
       .stat-box h3 {
         margin-top: 0;
         color: #333;
         font-size: 1.2rem;
       }
-      
+
       .stat-value {
         font-size: 2rem;
         font-weight: bold;
         color: #007bff;
         margin-top: 1rem;
       }
-      
+
       .token-table-container {
         background-color: #fff;
         border-radius: 8px;
@@ -301,35 +302,35 @@
         padding: 1.5rem;
         overflow-x: auto;
       }
-      
+
       .token-table {
         width: 100%;
         border-collapse: collapse;
       }
-      
+
       .token-table th,
       .token-table td {
         padding: 1rem;
         text-align: left;
         border-bottom: 1px solid #eee;
       }
-      
+
       .token-table th {
         background-color: #f5f5f5;
         font-weight: 600;
         color: #333;
       }
-      
+
       .token-table tbody tr:hover {
         background-color: #f9f9f9;
       }
-      
+
       .loading-message {
         text-align: center;
         color: #666;
         padding: 2rem;
       }
-      
+
       /* Grafik stilleri */
       .chart-container {
         background-color: #fff;
@@ -338,14 +339,14 @@
         padding: 1.5rem;
         margin-bottom: 2rem;
       }
-      
+
       .chart-container h3 {
         text-align: center;
         margin-top: 0;
         margin-bottom: 1.5rem;
         color: #333;
       }
-      
+
       .chart {
         height: 250px;
         display: flex;
@@ -355,9 +356,9 @@
         border-bottom: 2px solid #ddd;
         position: relative;
       }
-      
+
       .chart::before {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         top: 0;
@@ -365,7 +366,7 @@
         width: 2px;
         background-color: #ddd;
       }
-      
+
       .chart-loading {
         position: absolute;
         top: 50%;
@@ -373,14 +374,14 @@
         transform: translate(-50%, -50%);
         color: #666;
       }
-      
+
       .chart-bar-group {
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 12%;
       }
-      
+
       .chart-date {
         font-size: 0.8rem;
         color: #666;
@@ -391,7 +392,7 @@
         width: 100%;
         height: 40px;
       }
-      
+
       .chart-bars {
         display: flex;
         width: 100%;
@@ -399,48 +400,48 @@
         align-items: flex-end;
         justify-content: center;
       }
-      
+
       .chart-bar {
         width: 40%;
         margin: 0 5%;
         transition: height 0.3s ease;
       }
-      
+
       .token-bar {
         background-color: #007bff;
       }
-      
+
       .check-bar {
         background-color: #28a745;
       }
-      
+
       .chart-legend {
         display: flex;
         justify-content: center;
         margin-top: 3rem;
       }
-      
+
       .legend-item {
         display: flex;
         align-items: center;
         margin: 0 1rem;
       }
-      
+
       .legend-color {
         width: 20px;
         height: 20px;
         margin-right: 0.5rem;
         border-radius: 4px;
       }
-      
+
       .token-color {
         background-color: #007bff;
       }
-      
+
       .check-color {
         background-color: #28a745;
       }
-      
+
       .chart-y-axis {
         position: absolute;
         left: 0;
@@ -451,25 +452,25 @@
         justify-content: space-between;
         pointer-events: none;
       }
-      
+
       .y-axis-label {
         font-size: 0.7rem;
         color: #666;
         transform: translateX(-50%);
         text-align: right;
       }
-      
+
       /* Alkol İçerik tablosu için stiller */
       .alkol-icerik-wrapper {
         background-color: #fff;
         border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         padding: 20px 50px;
         overflow-x: auto;
         width: 90%;
         margin: 0 auto;
       }
-      
+
       .alkol-icerik-wrapper .header {
         display: flex;
         justify-content: space-between;
@@ -478,14 +479,14 @@
         background-color: #fff;
         padding: 15px;
         border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
-      
+
       .alkol-icerik-wrapper .actions-container {
         display: flex;
         align-items: center;
       }
-      
+
       .alkol-icerik-wrapper .add-new-btn {
         display: flex;
         align-items: center;
@@ -499,62 +500,62 @@
         font-weight: 500;
         transition: background-color 0.3s;
       }
-      
+
       .alkol-icerik-wrapper .add-new-btn:hover {
         background-color: #218838;
       }
-      
+
       .alkol-icerik-wrapper .add-new-btn i {
         margin-right: 5px;
       }
-      
+
       .alkol-icerik-wrapper .header h3 {
         margin: 0;
         font-size: 1.5rem;
         color: #333;
       }
-      
+
       .alkol-icerik-wrapper .stats {
         display: flex;
         align-items: center;
       }
-      
+
       .alkol-icerik-wrapper .stat-item {
         margin-left: 20px;
         text-align: center;
       }
-      
+
       .alkol-icerik-wrapper .stat-value {
         font-size: 1.2rem;
         font-weight: bold;
         color: #007bff;
       }
-      
+
       .alkol-icerik-wrapper .stat-label {
         font-size: 0.8rem;
         color: #666;
       }
-      
+
       .alkol-icerik-wrapper .table-container {
         background-color: #fff;
         border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         overflow-x: auto;
       }
-      
+
       .alkol-icerik-wrapper table {
         width: 100%;
         border-collapse: collapse;
       }
-      
-      .alkol-icerik-wrapper th, 
+
+      .alkol-icerik-wrapper th,
       .alkol-icerik-wrapper td {
         padding: 12px 15px;
         text-align: left;
         border-bottom: 1px solid #ddd;
         min-width: 150px;
       }
-      
+
       .alkol-icerik-wrapper th {
         background-color: #f8f9fa;
         color: #333;
@@ -562,19 +563,19 @@
         position: sticky;
         top: 0;
       }
-      
+
       .alkol-icerik-wrapper tr:hover {
         background-color: #f5f5f5;
       }
-      
+
       .alkol-icerik-wrapper .action-cell {
         white-space: nowrap;
         width: 100px;
         min-width: 100px;
       }
-      
-      .alkol-icerik-wrapper .edit-btn, 
-      .alkol-icerik-wrapper .save-btn, 
+
+      .alkol-icerik-wrapper .edit-btn,
+      .alkol-icerik-wrapper .save-btn,
       .alkol-icerik-wrapper .cancel-btn {
         background: none;
         border: none;
@@ -586,25 +587,25 @@
         align-items: center;
         justify-content: center;
       }
-      
+
       .alkol-icerik-wrapper .edit-btn {
         color: #007bff;
       }
-      
+
       .alkol-icerik-wrapper .save-btn {
         color: #28a745;
       }
-      
+
       .alkol-icerik-wrapper .cancel-btn {
         color: #dc3545;
       }
-      
-      .alkol-icerik-wrapper .edit-btn:hover, 
-      .alkol-icerik-wrapper .save-btn:hover, 
+
+      .alkol-icerik-wrapper .edit-btn:hover,
+      .alkol-icerik-wrapper .save-btn:hover,
       .alkol-icerik-wrapper .cancel-btn:hover {
-        background-color: rgba(0,0,0,0.05);
+        background-color: rgba(0, 0, 0, 0.05);
       }
-      
+
       .alkol-icerik-wrapper .edit-mode input {
         width: 100%;
         padding: 8px;
@@ -612,18 +613,18 @@
         border-radius: 4px;
         box-sizing: border-box;
       }
-      
+
       .alkol-icerik-wrapper .edit-mode {
         background-color: #fff8e1;
       }
-      
+
       .alkol-icerik-wrapper .loading {
         text-align: center;
         padding: 20px;
         font-style: italic;
         color: #666;
       }
-      
+
       .alkol-icerik-wrapper .error {
         background-color: #f8d7da;
         color: #721c24;
@@ -631,7 +632,7 @@
         border-radius: 4px;
         margin-bottom: 15px;
       }
-      
+
       .alkol-icerik-wrapper .success {
         background-color: #d4edda;
         color: #155724;
@@ -639,44 +640,44 @@
         border-radius: 4px;
         margin-bottom: 15px;
       }
-      
+
       .alkol-icerik-wrapper .hidden {
         display: none;
       }
-      
+
       /* Yeni Kayıt Formu Stilleri */
       .new-word-form-container {
         background-color: #f8f9fa;
         border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         padding: 20px;
         margin-bottom: 20px;
       }
-      
+
       .new-word-form {
         width: 100%;
       }
-      
+
       .form-row {
         display: flex;
         flex-wrap: wrap;
         margin-bottom: 15px;
         justify-content: space-between;
       }
-      
+
       .form-group {
         flex: 0 0 150px;
         margin-bottom: 15px;
         margin-right: 10px;
       }
-      
+
       .form-group label {
         display: block;
         font-weight: 500;
         margin-bottom: 5px;
         color: #333;
       }
-      
+
       .form-group textarea {
         width: 150px;
         height: 100px;
@@ -685,14 +686,15 @@
         border-radius: 4px;
         resize: none;
       }
-      
+
       .form-buttons {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
       }
-      
-      .save-new-btn, .cancel-new-btn {
+
+      .save-new-btn,
+      .cancel-new-btn {
         padding: 8px 15px;
         border: none;
         border-radius: 4px;
@@ -700,21 +702,21 @@
         font-weight: 500;
         margin-top: 5px;
       }
-      
+
       .save-new-btn {
         background-color: #28a745;
         color: white;
       }
-      
+
       .save-new-btn:hover {
         background-color: #218838;
       }
-      
+
       .cancel-new-btn {
         background-color: #dc3545;
         color: white;
       }
-      
+
       .cancel-new-btn:hover {
         background-color: #c82333;
       }
@@ -773,7 +775,10 @@
           </form>
 
           <div id="response"></div>
-          <div id="formalizeResponse" style="margin-top: 1rem; color: #28a745"></div>
+          <div
+            id="formalizeResponse"
+            style="margin-top: 1rem; color: #28a745"
+          ></div>
         </div>
       </div>
 
@@ -781,7 +786,7 @@
       <div id="tab2" class="tab-content">
         <div class="barcode-container">
           <h2>Barcode Kelimeler</h2>
-          
+
           <!-- Barcode Kelimeler için alt tablar -->
           <div class="sub-tabs">
             <div class="sub-tab active" data-subtab="subtab1">Alkol İçerik</div>
@@ -791,12 +796,16 @@
             <div class="sub-tab" data-subtab="subtab5">Domuz-Ürünleri</div>
             <div class="sub-tab" data-subtab="subtab6">Helal-Hayvansal</div>
           </div>
-          
+
           <!-- Alt tab içerikleri -->
           <div class="sub-tab-contents">
             <!-- Alkol İçerik -->
             <div id="subtab1" class="sub-tab-content active">
-              <div class="content-box" id="alkolIcerikContainer" style="width: 100%; max-width: 100%;">
+              <div
+                class="content-box"
+                id="alkolIcerikContainer"
+                style="width: 100%; max-width: 100%"
+              >
                 <h3>Alkol İçeren Maddeler</h3>
                 <div class="alkol-icerik-wrapper">
                   <div class="header">
@@ -813,10 +822,13 @@
                       </div>
                     </div>
                   </div>
-                  
+
                   <div id="notification" class="hidden"></div>
-                  
-                  <div id="newWordFormContainer" class="new-word-form-container hidden">
+
+                  <div
+                    id="newWordFormContainer"
+                    class="new-word-form-container hidden"
+                  >
                     <div class="new-word-form">
                       <div class="form-row">
                         <div class="form-group">
@@ -902,13 +914,17 @@
                           <textarea id="newCz" name="cz" rows="4"></textarea>
                         </div>
                         <div class="form-group form-buttons">
-                          <button id="saveNewWordBtn" class="save-new-btn">Kaydet</button>
-                          <button id="cancelNewWordBtn" class="cancel-new-btn">İptal</button>
+                          <button id="saveNewWordBtn" class="save-new-btn">
+                            Kaydet
+                          </button>
+                          <button id="cancelNewWordBtn" class="cancel-new-btn">
+                            İptal
+                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div class="table-container">
                     <table id="alkolTable">
                       <thead>
@@ -937,7 +953,9 @@
                       </thead>
                       <tbody id="tableBody">
                         <tr>
-                          <td colspan="20" class="loading">Veriler yükleniyor...</td>
+                          <td colspan="20" class="loading">
+                            Veriler yükleniyor...
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -945,53 +963,72 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Hayvansal İçerik -->
             <div id="subtab2" class="sub-tab-content">
               <div class="content-box">
                 <h3>Hayvansal İçerikler</h3>
                 <p>Bu bölümde hayvansal içeriklerin listesi yer alacaktır.</p>
-                <textarea id="animalContent" placeholder="Hayvansal içerikleri buraya ekleyin..."></textarea>
+                <textarea
+                  id="animalContent"
+                  placeholder="Hayvansal içerikleri buraya ekleyin..."
+                ></textarea>
                 <button class="save-button">Kaydet</button>
               </div>
             </div>
-            
+
             <!-- E-Code -->
             <div id="subtab3" class="sub-tab-content">
               <div class="content-box">
                 <h3>E-Kodlar</h3>
                 <p>Bu bölümde E-Kodların listesi yer alacaktır.</p>
-                <textarea id="eCodeContent" placeholder="E-Kodları buraya ekleyin..."></textarea>
+                <textarea
+                  id="eCodeContent"
+                  placeholder="E-Kodları buraya ekleyin..."
+                ></textarea>
                 <button class="save-button">Kaydet</button>
               </div>
             </div>
-            
+
             <!-- Non-Alkol -->
             <div id="subtab4" class="sub-tab-content">
               <div class="content-box">
                 <h3>Non-Alkol İçerikler</h3>
-                <p>Bu bölümde alkol sayılmayan maddelerin listesi yer alacaktır.</p>
-                <textarea id="nonAlcoholContent" placeholder="Alkol sayılmayan maddeleri buraya ekleyin..."></textarea>
+                <p>
+                  Bu bölümde alkol sayılmayan maddelerin listesi yer alacaktır.
+                </p>
+                <textarea
+                  id="nonAlcoholContent"
+                  placeholder="Alkol sayılmayan maddeleri buraya ekleyin..."
+                ></textarea>
                 <button class="save-button">Kaydet</button>
               </div>
             </div>
-            
+
             <!-- Domuz-Ürünleri -->
             <div id="subtab5" class="sub-tab-content">
               <div class="content-box">
                 <h3>Domuz Ürünleri</h3>
                 <p>Bu bölümde domuz ürünlerinin listesi yer alacaktır.</p>
-                <textarea id="porkContent" placeholder="Domuz ürünlerini buraya ekleyin..."></textarea>
+                <textarea
+                  id="porkContent"
+                  placeholder="Domuz ürünlerini buraya ekleyin..."
+                ></textarea>
                 <button class="save-button">Kaydet</button>
               </div>
             </div>
-            
+
             <!-- Helal-Hayvansal -->
             <div id="subtab6" class="sub-tab-content">
               <div class="content-box">
                 <h3>Helal Hayvansal Ürünler</h3>
-                <p>Bu bölümde helal hayvansal ürünlerin listesi yer alacaktır.</p>
-                <textarea id="halalAnimalContent" placeholder="Helal hayvansal ürünleri buraya ekleyin..."></textarea>
+                <p>
+                  Bu bölümde helal hayvansal ürünlerin listesi yer alacaktır.
+                </p>
+                <textarea
+                  id="halalAnimalContent"
+                  placeholder="Helal hayvansal ürünleri buraya ekleyin..."
+                ></textarea>
                 <button class="save-button">Kaydet</button>
               </div>
             </div>
@@ -1003,7 +1040,7 @@
       <div id="tab3" class="tab-content">
         <div class="token-container">
           <h2>Token Kullanım</h2>
-          
+
           <!-- Toplam İstatistikler -->
           <div class="token-stats">
             <div class="stat-box">
@@ -1015,7 +1052,7 @@
               <div class="stat-value" id="totalCheckCallSum">Yükleniyor...</div>
             </div>
           </div>
-          
+
           <!-- Son 1 Haftalık Grafik -->
           <div class="chart-container">
             <h3>Son 1 Haftalık Token Kullanımı</h3>
@@ -1033,7 +1070,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Token Kullanım Tablosu -->
           <div class="token-table-container">
             <table class="token-table">
@@ -1046,7 +1083,9 @@
               </thead>
               <tbody id="tokenTableBody">
                 <tr>
-                  <td colspan="3" class="loading-message">Veriler yükleniyor...</td>
+                  <td colspan="3" class="loading-message">
+                    Veriler yükleniyor...
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -1062,58 +1101,64 @@
         </div>
       </div>
     </div>
-    
+
     <script>
       // Tab işlevselliği
-      document.addEventListener('DOMContentLoaded', function() {
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const subTabs = document.querySelectorAll('.sub-tab');
-        const subTabContents = document.querySelectorAll('.sub-tab-content');
-        
+      document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+        const subTabs = document.querySelectorAll(".sub-tab");
+        const subTabContents = document.querySelectorAll(".sub-tab-content");
+
         // İlk açılışta 4. tab'ı aktif yap
-        activateTab('tab4');
-        
-        tabs.forEach(tab => {
-          tab.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
+        activateTab("tab4");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const tabId = this.getAttribute("data-tab");
             activateTab(tabId);
           });
         });
-        
+
         // Alt tablar için tıklama olayı
-        subTabs.forEach(subTab => {
-          subTab.addEventListener('click', function() {
-            const subTabId = this.getAttribute('data-subtab');
+        subTabs.forEach((subTab) => {
+          subTab.addEventListener("click", function () {
+            const subTabId = this.getAttribute("data-subtab");
             activateSubTab(subTabId);
           });
         });
-        
+
         function activateTab(tabId) {
           // Tüm tabları ve içeriklerini deaktif yap
-          tabs.forEach(tab => tab.classList.remove('active'));
-          tabContents.forEach(content => content.classList.remove('active'));
-          
+          tabs.forEach((tab) => tab.classList.remove("active"));
+          tabContents.forEach((content) => content.classList.remove("active"));
+
           // Seçilen tabı ve içeriğini aktif yap
-          document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
-          document.getElementById(tabId).classList.add('active');
-          
+          document
+            .querySelector(`.tab[data-tab="${tabId}"]`)
+            .classList.add("active");
+          document.getElementById(tabId).classList.add("active");
+
           // Eğer Barcode Kelimeler tabı seçildiyse, ilk alt tabı aktif yap
-          if (tabId === 'tab2') {
-            activateSubTab('subtab1');
+          if (tabId === "tab2") {
+            activateSubTab("subtab1");
           }
         }
-        
+
         function activateSubTab(subTabId) {
           // Tüm alt tabları ve içeriklerini deaktif yap
-          subTabs.forEach(subTab => subTab.classList.remove('active'));
-          subTabContents.forEach(content => content.classList.remove('active'));
-          
+          subTabs.forEach((subTab) => subTab.classList.remove("active"));
+          subTabContents.forEach((content) =>
+            content.classList.remove("active")
+          );
+
           // Seçilen alt tabı ve içeriğini aktif yap
-          document.querySelector(`.sub-tab[data-subtab="${subTabId}"]`).classList.add('active');
-          document.getElementById(subTabId).classList.add('active');
+          document
+            .querySelector(`.sub-tab[data-subtab="${subTabId}"]`)
+            .classList.add("active");
+          document.getElementById(subTabId).classList.add("active");
         }
-        
+
         // Formalize Et butonuna tıklanınca çalışacak fonksiyon
         // Bu kısmı yorum satırına aldım çünkü HTML'de de yorum satırına alınmış
         /*
@@ -1142,18 +1187,17 @@
             }
           });
         */
-        
+
         // Verileri çek ve textarea'lara yerleştir
         async function fetchAndFillData() {
           try {
-            const res = await fetch(
-              `${BASE_URL}/helal-kontrol/base-talimat`
-            );
+            const res = await fetch(`${BASE_URL}/xhelal-kontrol/base-talimat`);
             if (!res.ok) throw new Error("Kayıt bulunamadı");
             const data = await res.json();
 
             // Her alanı doldur
-            document.getElementById("baseTalimat").value = data.baseTalimat || "";
+            document.getElementById("baseTalimat").value =
+              data.baseTalimat || "";
             document.getElementById("detayliTalimat").value =
               data.detayliTalimat || "";
             document.getElementById("eCode").value = data.eCode || "";
@@ -1187,7 +1231,8 @@
               baseTalimat: document.getElementById("baseTalimat").value,
               detayliTalimat: document.getElementById("detayliTalimat").value,
               eCode: document.getElementById("eCode").value || null,
-              alcoholWords: document.getElementById("alcoholWords").value || null,
+              alcoholWords:
+                document.getElementById("alcoholWords").value || null,
               containingAlcohol:
                 document.getElementById("containingAlcohol").value || null,
               animalProduct:
@@ -1201,16 +1246,13 @@
             };
 
             try {
-              const res = await fetch(
-                `${BASE_URL}/helal-kontrol`,
-                {
-                  method: "PUT",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(data),
-                }
-              );
+              const res = await fetch(`${BASE_URL}/xhelal-kontrol`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+              });
 
               const result = await res.json();
               document.getElementById("response").innerText =
@@ -1222,105 +1264,114 @@
           });
 
         // Yapay Zeka Kelimeleri tabı aktif olduğunda verileri çek
-        document.querySelector('.tab[data-tab="tab1"]').addEventListener('click', fetchAndFillData);
-        
+        document
+          .querySelector('.tab[data-tab="tab1"]')
+          .addEventListener("click", fetchAndFillData);
+
         // Token Kullanım tabı aktif olduğunda verileri çek
-        document.querySelector('.tab[data-tab="tab3"]').addEventListener('click', fetchTokenUsageData);
-        
+        document
+          .querySelector('.tab[data-tab="tab3"]')
+          .addEventListener("click", fetchTokenUsageData);
+
         // Token kullanım verilerini çek ve tabloya yerleştir
         async function fetchTokenUsageData() {
           try {
-            const tokenTableBody = document.getElementById('tokenTableBody');
-            const totalTokenSum = document.getElementById('totalTokenSum');
-            const totalCheckCallSum = document.getElementById('totalCheckCallSum');
-            const tokenChart = document.getElementById('tokenChart');
-            
+            const tokenTableBody = document.getElementById("tokenTableBody");
+            const totalTokenSum = document.getElementById("totalTokenSum");
+            const totalCheckCallSum =
+              document.getElementById("totalCheckCallSum");
+            const tokenChart = document.getElementById("tokenChart");
+
             // Yükleniyor mesajını göster
-            tokenTableBody.innerHTML = '<tr><td colspan="3" class="loading-message">Veriler yükleniyor...</td></tr>';
-            totalTokenSum.innerText = 'Yükleniyor...';
-            totalCheckCallSum.innerText = 'Yükleniyor...';
-            tokenChart.innerHTML = '<div class="chart-loading">Grafik yükleniyor...</div>';
-            
+            tokenTableBody.innerHTML =
+              '<tr><td colspan="3" class="loading-message">Veriler yükleniyor...</td></tr>';
+            totalTokenSum.innerText = "Yükleniyor...";
+            totalCheckCallSum.innerText = "Yükleniyor...";
+            tokenChart.innerHTML =
+              '<div class="chart-loading">Grafik yükleniyor...</div>';
+
             // API'den verileri çek
             const response = await fetch(`${BASE_URL}/used-stor`);
-            
+
             if (!response.ok) {
-              throw new Error('Veriler alınırken bir hata oluştu');
+              throw new Error("Veriler alınırken bir hata oluştu");
             }
-            
+
             const data = await response.json();
-            
+
             // Verileri tarihe göre sırala (en yeniden en eskiye)
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            
+
             // Toplam değerleri hesapla
             let tokenSumTotal = 0;
             let checkCallSumTotal = 0;
-            
-            data.forEach(item => {
+
+            data.forEach((item) => {
               tokenSumTotal += item.totalTokenCount;
               checkCallSumTotal += item.checkCallCount;
             });
-            
+
             // Toplam değerleri göster
             totalTokenSum.innerText = tokenSumTotal.toLocaleString();
             totalCheckCallSum.innerText = checkCallSumTotal.toLocaleString();
-            
+
             // Son 7 gün için tarih aralığı oluştur (bugün dahil)
             const today = new Date();
             today.setHours(23, 59, 59, 999); // Bugünün sonuna ayarla
-            
+
             const oneWeekAgo = new Date(today);
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 6); // 7 gün için 6 gün öncesi
             oneWeekAgo.setHours(0, 0, 0, 0); // Günün başına ayarla
-            
+
             // Son 7 gün için boş günlük veri yapısı oluştur
             const dailyData = {};
-            
+
             // Son 7 günün her biri için boş kayıtlar oluştur
             for (let i = 0; i < 7; i++) {
               const date = new Date(oneWeekAgo);
               date.setDate(date.getDate() + i);
-              const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD formatında
-              
+              const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD formatında
+
               dailyData[dateStr] = {
                 date: new Date(date),
                 totalTokenCount: 0,
-                checkCallCount: 0
+                checkCallCount: 0,
               };
             }
-            
+
             // Tarih karşılaştırma için yardımcı fonksiyon
             function isSameDay(date1, date2) {
-              return date1.getFullYear() === date2.getFullYear() &&
-                     date1.getMonth() === date2.getMonth() &&
-                     date1.getDate() === date2.getDate();
+              return (
+                date1.getFullYear() === date2.getFullYear() &&
+                date1.getMonth() === date2.getMonth() &&
+                date1.getDate() === date2.getDate()
+              );
             }
-            
+
             // Son 7 gün içindeki verileri filtrele
-            const lastWeekData = data.filter(item => {
+            const lastWeekData = data.filter((item) => {
               const itemDate = new Date(item.createdAt);
-              
+
               // Son 7 gün içindeki herhangi bir güne ait mi kontrol et
               for (let i = 0; i < 7; i++) {
                 const checkDate = new Date(oneWeekAgo);
                 checkDate.setDate(checkDate.getDate() + i);
-                
+
                 if (isSameDay(itemDate, checkDate)) {
                   return true;
                 }
               }
-              
+
               return false;
             });
-            
+
             // Verileri günlere göre grupla
-            lastWeekData.forEach(item => {
+            lastWeekData.forEach((item) => {
               // Tarih karşılaştırma için her bir günü kontrol et
               for (const dateStr in dailyData) {
                 const currentDate = dailyData[dateStr].date;
                 const itemDate = new Date(item.createdAt);
-                
+
                 if (isSameDay(currentDate, itemDate)) {
                   dailyData[dateStr].totalTokenCount += item.totalTokenCount;
                   dailyData[dateStr].checkCallCount += item.checkCallCount;
@@ -1328,42 +1379,54 @@
                 }
               }
             });
-            
+
             // Günlük verileri diziye dönüştür ve tarihe göre sırala
             const dailyDataArray = Object.values(dailyData);
             dailyDataArray.sort((a, b) => a.date - b.date);
-            
+
             // Grafik için maksimum değeri bul (10000'in katları olacak şekilde)
-            let maxTokenCount = Math.max(...dailyDataArray.map(item => item.totalTokenCount), 10000);
+            let maxTokenCount = Math.max(
+              ...dailyDataArray.map((item) => item.totalTokenCount),
+              10000
+            );
             maxTokenCount = Math.ceil(maxTokenCount / 10000) * 10000;
-            
+
             // Grafik için Y ekseni etiketlerini oluştur
             const yAxisLabels = [];
             for (let i = 0; i <= 5; i++) {
-              yAxisLabels.push(Math.round(maxTokenCount * i / 5).toLocaleString());
+              yAxisLabels.push(
+                Math.round((maxTokenCount * i) / 5).toLocaleString()
+              );
             }
-            
+
             // Grafik içeriğini oluştur
             let chartHTML = `
               <div class="chart-y-axis">
-                ${yAxisLabels.reverse().map(label => `<div class="y-axis-label">${label}</div>`).join('')}
+                ${yAxisLabels
+                  .reverse()
+                  .map((label) => `<div class="y-axis-label">${label}</div>`)
+                  .join("")}
               </div>
             `;
-            
+
             // Eğer veri yoksa mesaj göster
             if (dailyDataArray.length === 0) {
-              tokenChart.innerHTML = '<div class="chart-loading">Son 1 hafta için veri bulunamadı</div>';
+              tokenChart.innerHTML =
+                '<div class="chart-loading">Son 1 hafta için veri bulunamadı</div>';
             } else {
               // Her gün için sütunları oluştur
-              dailyDataArray.forEach(dayData => {
-                const tokenBarHeight = (dayData.totalTokenCount / maxTokenCount) * 100;
-                const checkBarHeight = (dayData.checkCallCount / maxTokenCount) * 100;
-                
-                const formattedDate = dayData.date.toLocaleDateString('tr-TR', {
-                  day: 'numeric',
-                  month: 'short'
-                }) + (isSameDay(dayData.date, new Date()) ? ' (Bugün)' : '');
-                
+              dailyDataArray.forEach((dayData) => {
+                const tokenBarHeight =
+                  (dayData.totalTokenCount / maxTokenCount) * 100;
+                const checkBarHeight =
+                  (dayData.checkCallCount / maxTokenCount) * 100;
+
+                const formattedDate =
+                  dayData.date.toLocaleDateString("tr-TR", {
+                    day: "numeric",
+                    month: "short",
+                  }) + (isSameDay(dayData.date, new Date()) ? " (Bugün)" : "");
+
                 chartHTML += `
                   <div class="chart-bar-group">
                     <div class="chart-bars">
@@ -1374,80 +1437,83 @@
                   </div>
                 `;
               });
-              
+
               tokenChart.innerHTML = chartHTML;
             }
-            
+
             // Tablo içeriğini oluştur
             if (data.length === 0) {
-              tokenTableBody.innerHTML = '<tr><td colspan="3" class="loading-message">Veri bulunamadı</td></tr>';
+              tokenTableBody.innerHTML =
+                '<tr><td colspan="3" class="loading-message">Veri bulunamadı</td></tr>';
             } else {
-              tokenTableBody.innerHTML = '';
-              
-              data.forEach(item => {
-                const row = document.createElement('tr');
-                
+              tokenTableBody.innerHTML = "";
+
+              data.forEach((item) => {
+                const row = document.createElement("tr");
+
                 // Tarihi formatla
                 const date = new Date(item.createdAt);
-                const formattedDate = date.toLocaleDateString('tr-TR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                const formattedDate = date.toLocaleDateString("tr-TR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 });
-                
+
                 row.innerHTML = `
                   <td>${formattedDate}</td>
                   <td>${item.totalTokenCount.toLocaleString()}</td>
                   <td>${item.checkCallCount.toLocaleString()}</td>
                 `;
-                
+
                 tokenTableBody.appendChild(row);
               });
             }
           } catch (error) {
-            console.error('Token kullanım verileri alınırken hata:', error);
-            document.getElementById('tokenTableBody').innerHTML = 
-              `<tr><td colspan="3" class="loading-message">Hata: ${error.message}</td></tr>`;
-            document.getElementById('totalTokenSum').innerText = 'Hata';
-            document.getElementById('totalCheckCallSum').innerText = 'Hata';
-            document.getElementById('tokenChart').innerHTML = 
-              `<div class="chart-loading">Hata: ${error.message}</div>`;
+            console.error("Token kullanım verileri alınırken hata:", error);
+            document.getElementById(
+              "tokenTableBody"
+            ).innerHTML = `<tr><td colspan="3" class="loading-message">Hata: ${error.message}</td></tr>`;
+            document.getElementById("totalTokenSum").innerText = "Hata";
+            document.getElementById("totalCheckCallSum").innerText = "Hata";
+            document.getElementById(
+              "tokenChart"
+            ).innerHTML = `<div class="chart-loading">Hata: ${error.message}</div>`;
           }
         }
-        
+
         // Alkol İçerik tablosu için fonksiyonlar
         async function fetchAlkolData() {
           try {
             const response = await fetch(`${BASE_URL}/alkol-maddeleri`);
-            
+
             if (!response.ok) {
-              throw new Error('Veriler alınırken bir hata oluştu');
+              throw new Error("Veriler alınırken bir hata oluştu");
             }
-            
+
             const data = await response.json();
-            
+
             // Toplam kayıt sayısını güncelle
-            document.getElementById('totalItems').textContent = data.length;
-            
+            document.getElementById("totalItems").textContent = data.length;
+
             // Tabloyu doldur
             renderAlkolTable(data);
           } catch (error) {
-            console.error('Veri çekme hatası:', error);
-            showAlkolNotification('error', `Hata: ${error.message}`);
-            document.getElementById('tableBody').innerHTML = `
+            console.error("Veri çekme hatası:", error);
+            showAlkolNotification("error", `Hata: ${error.message}`);
+            document.getElementById("tableBody").innerHTML = `
               <tr>
                 <td colspan="20" class="error">Veriler yüklenemedi: ${error.message}</td>
               </tr>
             `;
           }
         }
-        
+
         // Tabloyu oluştur
         function renderAlkolTable(data) {
-          const tableBody = document.getElementById('tableBody');
-          
+          const tableBody = document.getElementById("tableBody");
+
           if (data.length === 0) {
             tableBody.innerHTML = `
               <tr>
@@ -1456,13 +1522,13 @@
             `;
             return;
           }
-          
-          tableBody.innerHTML = '';
-          
-          data.forEach(item => {
-            const row = document.createElement('tr');
+
+          tableBody.innerHTML = "";
+
+          data.forEach((item) => {
+            const row = document.createElement("tr");
             row.dataset.id = item.id;
-            
+
             row.innerHTML = `
               <td class="action-cell">
                 <button class="edit-btn" onclick="editRow('${item.id}')">
@@ -1471,253 +1537,276 @@
                 <button class="save-btn hidden" onclick="saveRow('${item.id}')">
                   <i class="material-icons">save</i>
                 </button>
-                <button class="cancel-btn hidden" onclick="cancelEdit('${item.id}')">
+                <button class="cancel-btn hidden" onclick="cancelEdit('${
+                  item.id
+                }')">
                   <i class="material-icons">close</i>
                 </button>
               </td>
-              <td data-field="en">${item.en || ''}</td>
-              <td data-field="tr">${item.tr || ''}</td>
-              <td data-field="de">${item.de || ''}</td>
-              <td data-field="fr">${item.fr || ''}</td>
-              <td data-field="it">${item.it || ''}</td>
-              <td data-field="es">${item.es || ''}</td>
-              <td data-field="pt">${item.pt || ''}</td>
-              <td data-field="nl">${item.nl || ''}</td>
-              <td data-field="pl">${item.pl || ''}</td>
-              <td data-field="se">${item.se || ''}</td>
-              <td data-field="no">${item.no || ''}</td>
-              <td data-field="dk">${item.dk || ''}</td>
-              <td data-field="fi">${item.fi || ''}</td>
-              <td data-field="ru">${item.ru || ''}</td>
-              <td data-field="ua">${item.ua || ''}</td>
-              <td data-field="ro">${item.ro || ''}</td>
-              <td data-field="gr">${item.gr || ''}</td>
-              <td data-field="hu">${item.hu || ''}</td>
-              <td data-field="cz">${item.cz || ''}</td>
+              <td data-field="en">${item.en || ""}</td>
+              <td data-field="tr">${item.tr || ""}</td>
+              <td data-field="de">${item.de || ""}</td>
+              <td data-field="fr">${item.fr || ""}</td>
+              <td data-field="it">${item.it || ""}</td>
+              <td data-field="es">${item.es || ""}</td>
+              <td data-field="pt">${item.pt || ""}</td>
+              <td data-field="nl">${item.nl || ""}</td>
+              <td data-field="pl">${item.pl || ""}</td>
+              <td data-field="se">${item.se || ""}</td>
+              <td data-field="no">${item.no || ""}</td>
+              <td data-field="dk">${item.dk || ""}</td>
+              <td data-field="fi">${item.fi || ""}</td>
+              <td data-field="ru">${item.ru || ""}</td>
+              <td data-field="ua">${item.ua || ""}</td>
+              <td data-field="ro">${item.ro || ""}</td>
+              <td data-field="gr">${item.gr || ""}</td>
+              <td data-field="hu">${item.hu || ""}</td>
+              <td data-field="cz">${item.cz || ""}</td>
             `;
-            
+
             tableBody.appendChild(row);
           });
         }
-        
+
         // Satırı düzenleme moduna geçir
         function editRow(id) {
           const row = document.querySelector(`tr[data-id="${id}"]`);
-          
+
           // Düzenleme modunu etkinleştir
-          row.classList.add('edit-mode');
-          
+          row.classList.add("edit-mode");
+
           // Butonları değiştir
-          row.querySelector('.edit-btn').classList.add('hidden');
-          row.querySelector('.save-btn').classList.remove('hidden');
-          row.querySelector('.cancel-btn').classList.remove('hidden');
-          
+          row.querySelector(".edit-btn").classList.add("hidden");
+          row.querySelector(".save-btn").classList.remove("hidden");
+          row.querySelector(".cancel-btn").classList.remove("hidden");
+
           // Hücreleri input'a dönüştür
-          const cells = row.querySelectorAll('td[data-field]');
-          cells.forEach(cell => {
-            const field = cell.getAttribute('data-field');
+          const cells = row.querySelectorAll("td[data-field]");
+          cells.forEach((cell) => {
+            const field = cell.getAttribute("data-field");
             const value = cell.textContent;
-            
+
             // Orijinal değeri sakla
             cell.dataset.originalValue = value;
-            
+
             // Input oluştur
             cell.innerHTML = `<input type="text" name="${field}" value="${value}">`;
           });
         }
-        
+
         // Değişiklikleri kaydet
         async function saveRow(id) {
           const row = document.querySelector(`tr[data-id="${id}"]`);
-          
+
           // Değerleri topla
           const data = {
-            id: id
+            id: id,
           };
-          
-          const inputs = row.querySelectorAll('input');
-          inputs.forEach(input => {
+
+          const inputs = row.querySelectorAll("input");
+          inputs.forEach((input) => {
             data[input.name] = input.value;
           });
-          
+
           try {
             // API'ye gönder
             const response = await fetch(`${BASE_URL}/alkol-maddeleri`, {
-              method: 'PUT',
+              method: "PUT",
               headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
               },
-              body: JSON.stringify(data)
+              body: JSON.stringify(data),
             });
-            
+
             if (!response.ok) {
-              throw new Error('Güncelleme sırasında bir hata oluştu');
+              throw new Error("Güncelleme sırasında bir hata oluştu");
             }
-            
+
             const result = await response.json();
-            
+
             // Düzenleme modundan çık
             exitEditMode(row, result);
-            
+
             // Başarı mesajı göster
-            showAlkolNotification('success', 'Kayıt başarıyla güncellendi');
+            showAlkolNotification("success", "Kayıt başarıyla güncellendi");
           } catch (error) {
-            console.error('Güncelleme hatası:', error);
-            showAlkolNotification('error', `Hata: ${error.message}`);
+            console.error("Güncelleme hatası:", error);
+            showAlkolNotification("error", `Hata: ${error.message}`);
           }
         }
-        
+
         // Düzenlemeyi iptal et
         function cancelEdit(id) {
           const row = document.querySelector(`tr[data-id="${id}"]`);
-          
+
           // Hücreleri orijinal değerlerine geri döndür
-          const cells = row.querySelectorAll('td[data-field]');
-          cells.forEach(cell => {
-            const originalValue = cell.dataset.originalValue || '';
+          const cells = row.querySelectorAll("td[data-field]");
+          cells.forEach((cell) => {
+            const originalValue = cell.dataset.originalValue || "";
             cell.textContent = originalValue;
           });
-          
+
           // Düzenleme modundan çık
-          row.classList.remove('edit-mode');
-          
+          row.classList.remove("edit-mode");
+
           // Butonları geri al
-          row.querySelector('.edit-btn').classList.remove('hidden');
-          row.querySelector('.save-btn').classList.add('hidden');
-          row.querySelector('.cancel-btn').classList.add('hidden');
+          row.querySelector(".edit-btn").classList.remove("hidden");
+          row.querySelector(".save-btn").classList.add("hidden");
+          row.querySelector(".cancel-btn").classList.add("hidden");
         }
-        
+
         // Düzenleme modundan çık ve yeni değerleri göster
         function exitEditMode(row, data) {
           // Düzenleme modunu kapat
-          row.classList.remove('edit-mode');
-          
+          row.classList.remove("edit-mode");
+
           // Butonları geri al
-          row.querySelector('.edit-btn').classList.remove('hidden');
-          row.querySelector('.save-btn').classList.add('hidden');
-          row.querySelector('.cancel-btn').classList.add('hidden');
-          
+          row.querySelector(".edit-btn").classList.remove("hidden");
+          row.querySelector(".save-btn").classList.add("hidden");
+          row.querySelector(".cancel-btn").classList.add("hidden");
+
           // Hücreleri güncelle
-          const cells = row.querySelectorAll('td[data-field]');
-          cells.forEach(cell => {
-            const field = cell.getAttribute('data-field');
-            cell.textContent = data[field] || '';
+          const cells = row.querySelectorAll("td[data-field]");
+          cells.forEach((cell) => {
+            const field = cell.getAttribute("data-field");
+            cell.textContent = data[field] || "";
           });
         }
-        
+
         // Bildirim göster
         function showAlkolNotification(type, message) {
-          const notification = document.getElementById('notification');
+          const notification = document.getElementById("notification");
           notification.className = type; // error veya success
           notification.textContent = message;
-          notification.classList.remove('hidden');
-          
+          notification.classList.remove("hidden");
+
           // 3 saniye sonra bildirim kaybolsun
           setTimeout(() => {
-            notification.classList.add('hidden');
+            notification.classList.add("hidden");
           }, 3000);
         }
 
         // Yeni kayıt formu göster/gizle
         function toggleNewWordForm() {
-          const formContainer = document.getElementById('newWordFormContainer');
-          formContainer.classList.toggle('hidden');
+          const formContainer = document.getElementById("newWordFormContainer");
+          formContainer.classList.toggle("hidden");
         }
-        
+
         // Yeni kayıt ekleme fonksiyonu
         async function saveNewWord() {
           try {
             // Form verilerini topla
             const newData = {
-              en: document.getElementById('newEn').value,
-              tr: document.getElementById('newTr').value,
-              de: document.getElementById('newDe').value,
-              fr: document.getElementById('newFr').value,
-              it: document.getElementById('newIt').value,
-              es: document.getElementById('newEs').value,
-              pt: document.getElementById('newPt').value,
-              nl: document.getElementById('newNl').value,
-              pl: document.getElementById('newPl').value,
-              se: document.getElementById('newSe').value,
-              no: document.getElementById('newNo').value,
-              dk: document.getElementById('newDk').value,
-              fi: document.getElementById('newFi').value,
-              ru: document.getElementById('newRu').value,
-              ua: document.getElementById('newUa').value,
-              ro: document.getElementById('newRo').value,
-              gr: document.getElementById('newGr').value,
-              hu: document.getElementById('newHu').value,
-              cz: document.getElementById('newCz').value
+              en: document.getElementById("newEn").value,
+              tr: document.getElementById("newTr").value,
+              de: document.getElementById("newDe").value,
+              fr: document.getElementById("newFr").value,
+              it: document.getElementById("newIt").value,
+              es: document.getElementById("newEs").value,
+              pt: document.getElementById("newPt").value,
+              nl: document.getElementById("newNl").value,
+              pl: document.getElementById("newPl").value,
+              se: document.getElementById("newSe").value,
+              no: document.getElementById("newNo").value,
+              dk: document.getElementById("newDk").value,
+              fi: document.getElementById("newFi").value,
+              ru: document.getElementById("newRu").value,
+              ua: document.getElementById("newUa").value,
+              ro: document.getElementById("newRo").value,
+              gr: document.getElementById("newGr").value,
+              hu: document.getElementById("newHu").value,
+              cz: document.getElementById("newCz").value,
             };
-            
+
             // API'ye gönder
             const response = await fetch(`${BASE_URL}/alkol-maddeleri`, {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
               },
-              body: JSON.stringify(newData)
+              body: JSON.stringify(newData),
             });
-            
+
             if (!response.ok) {
-              throw new Error('Yeni kayıt eklenirken bir hata oluştu');
+              throw new Error("Yeni kayıt eklenirken bir hata oluştu");
             }
-            
+
             // Başarı mesajı göster
-            showAlkolNotification('success', 'Yeni kayıt başarıyla eklendi');
-            
+            showAlkolNotification("success", "Yeni kayıt başarıyla eklendi");
+
             // Formu temizle ve gizle
             clearNewWordForm();
             toggleNewWordForm();
-            
+
             // Tabloyu yenile
             fetchAlkolData();
           } catch (error) {
-            console.error('Yeni kayıt ekleme hatası:', error);
-            showAlkolNotification('error', `Hata: ${error.message}`);
+            console.error("Yeni kayıt ekleme hatası:", error);
+            showAlkolNotification("error", `Hata: ${error.message}`);
           }
         }
-        
+
         // Yeni kayıt formunu temizle
         function clearNewWordForm() {
-          const formInputs = document.querySelectorAll('.new-word-form textarea');
-          formInputs.forEach(input => {
-            input.value = '';
+          const formInputs = document.querySelectorAll(
+            ".new-word-form textarea"
+          );
+          formInputs.forEach((input) => {
+            input.value = "";
           });
         }
-        
+
         // Yeni kayıt ekleme butonuna tıklanınca
-        document.getElementById('addNewWordBtn')?.addEventListener('click', toggleNewWordForm);
-        
+        document
+          .getElementById("addNewWordBtn")
+          ?.addEventListener("click", toggleNewWordForm);
+
         // Kaydet butonuna tıklanınca
-        document.getElementById('saveNewWordBtn')?.addEventListener('click', saveNewWord);
-        
+        document
+          .getElementById("saveNewWordBtn")
+          ?.addEventListener("click", saveNewWord);
+
         // İptal butonuna tıklanınca
-        document.getElementById('cancelNewWordBtn')?.addEventListener('click', function() {
-          clearNewWordForm();
-          toggleNewWordForm();
-        });
-        
+        document
+          .getElementById("cancelNewWordBtn")
+          ?.addEventListener("click", function () {
+            clearNewWordForm();
+            toggleNewWordForm();
+          });
+
         // Sayfa yüklendiğinde verileri çek (hangi tab aktifse)
-        if (document.querySelector('.tab[data-tab="tab1"]').classList.contains('active')) {
+        if (
+          document
+            .querySelector('.tab[data-tab="tab1"]')
+            .classList.contains("active")
+        ) {
           fetchAndFillData();
-        } else if (document.querySelector('.tab[data-tab="tab3"]').classList.contains('active')) {
+        } else if (
+          document
+            .querySelector('.tab[data-tab="tab3"]')
+            .classList.contains("active")
+        ) {
           fetchTokenUsageData();
         }
-        
+
         // Alkol İçerik tablosu için alt sekme değiştirildiğinde veri çek
-        document.querySelectorAll('.sub-tab').forEach(tab => {
-          tab.addEventListener('click', function() {
-            if (this.dataset.subtab === 'subtab1') {
+        document.querySelectorAll(".sub-tab").forEach((tab) => {
+          tab.addEventListener("click", function () {
+            if (this.dataset.subtab === "subtab1") {
               fetchAlkolData();
             }
           });
         });
-        
+
         // Ana tab değiştirildiğinde, eğer Barcode Kelimeler tabı açıldıysa ve Alkol İçerik alt tabı aktifse veri çek
-        document.querySelectorAll('.tab').forEach(tab => {
-          tab.addEventListener('click', function() {
-            if (this.dataset.tab === 'tab2' && document.querySelector('.sub-tab[data-subtab="subtab1"]').classList.contains('active')) {
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.addEventListener("click", function () {
+            if (
+              this.dataset.tab === "tab2" &&
+              document
+                .querySelector('.sub-tab[data-subtab="subtab1"]')
+                .classList.contains("active")
+            ) {
               fetchAlkolData();
             }
           });
