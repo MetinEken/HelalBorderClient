@@ -605,6 +605,58 @@
       .alkol-icerik-wrapper .cancel-btn:hover {
         background-color: rgba(0, 0, 0, 0.05);
       }
+      
+      /* Active/Inactive Badge Stilleri */
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-align: center;
+        min-width: 60px;
+      }
+      
+      .status-badge.active {
+        background-color: #28a745;
+        color: white;
+      }
+      
+      .status-badge.inactive {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      /* Detay Görünümü Stilleri */
+      .detail-view {
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      
+      .detail-item {
+        margin-bottom: 15px;
+      }
+      
+      .detail-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      
+      .detail-value {
+        color: #555;
+        line-height: 1.5;
+      }
+      
+      .content-block {
+        white-space: pre-wrap;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #007bff;
+      }
 
       .alkol-icerik-wrapper .edit-mode input {
         width: 100%;
@@ -724,7 +776,7 @@
   </head>
   <body>
     <div class="header">
-      <h1>Helal Border</h1>
+      <h1>Ai Projects</h1>
       <div class="logout-button" onclick="logout()">
         <i class="material-icons">exit_to_app</i> Çıkış
       </div>
@@ -732,7 +784,7 @@
 
     <div class="tab-container">
       <div class="tabs">
-        <div class="tab" data-tab="tab1">Yapay Zeka Kelimeleri</div>
+        <div class="tab" data-tab="tab1">Helal Kontrol</div>
         <div class="tab" data-tab="tab2">Lernen Ai</div>
         <div class="tab" data-tab="tab3">Token Kullanım</div>
         <div class="tab" data-tab="tab4">Hata Bildirimleri</div>
@@ -791,8 +843,8 @@
           <div class="sub-tabs">
             <!-- <div class="sub-tab active" data-subtab="subtab1">Alkol İçerik</div> -->
             <div class="sub-tab" data-subtab="subtab2">Assistant Ai</div>
-            <div class="sub-tab" data-subtab="subtab3">E-Code</div>
-            <div class="sub-tab" data-subtab="subtab4">Non-Alkol</div>
+            <div class="sub-tab" data-subtab="subtab3">Classes</div>
+            <div class="sub-tab" data-subtab="subtab4">Base Instruction</div>
             <div class="sub-tab" data-subtab="subtab5">Domuz-Ürünleri</div>
             <div class="sub-tab" data-subtab="subtab6">Helal-Hayvansal</div>
           </div>
@@ -1001,6 +1053,12 @@
                           <label for="newAssistantId">Asistan ID (Opsiyonel)</label>
                           <textarea id="newAssistantId" name="assistantId" rows="1"></textarea>
                         </div>
+                        <div class="form-group" style="flex: 0 0 100px; display: flex; align-items: center;">
+                          <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="newAssistantActive" name="active" checked style="margin-right: 8px; width: 18px; height: 18px;">
+                            <span>Aktif</span>
+                          </label>
+                        </div>
                       </div>
                       <div class="form-row">
                         <div class="form-group" style="flex: 1;">
@@ -1030,6 +1088,7 @@
                           <th>Dil</th>
                           <th>Talimatlar</th>
                           <th>Asistan ID</th>
+                          <th>Aktif</th>
                           <th>Oluşturulma Tarihi</th>
                           <th>Güncellenme Tarihi</th>
                         </tr>
@@ -1132,18 +1191,74 @@
               </div>
             </div>
 
-            <!-- Non-Alkol -->
+            <!-- Non-Alkol / Base Instruction -->
             <div id="subtab4" class="sub-tab-content">
-              <div class="content-box">
-                <h3>Non-Alkol İçerikler</h3>
-                <p>
-                  Bu bölümde alkol sayılmayan maddelerin listesi yer alacaktır.
-                </p>
-                <textarea
-                  id="nonAlcoholContent"
-                  placeholder="Alkol sayılmayan maddeleri buraya ekleyin..."
-                ></textarea>
-                <button class="save-button">Kaydet</button>
+              <div class="content-box" id="baseInstructionContainer" style="width: 100%; max-width: 100%">
+                <h3>Temel Talimat Yönetimi</h3>
+                <div class="alkol-icerik-wrapper">
+                  <div class="header">
+                    <h3>Temel Talimat</h3>
+                    <div class="actions-container">
+                      <button id="editBaseInstructionBtn" class="edit-btn">
+                        <i class="material-icons">edit</i> Düzenle
+                      </button>
+                      <div class="stats">
+                        <div class="stat-item">
+                          <div class="stat-label">Son Güncelleme</div>
+                          <div class="stat-value" id="baseInstructionLastUpdate">-</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="baseInstructionNotification" class="hidden"></div>
+
+                  <div id="baseInstructionFormContainer" class="new-word-form-container hidden">
+                    <div class="new-word-form">
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="baseInstructionCode">Kod</label>
+                          <textarea id="baseInstructionCode" name="code" rows="1"></textarea>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                          <label for="baseInstructionDescription">Açıklama</label>
+                          <textarea id="baseInstructionDescription" name="description" rows="1"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                          <label for="baseInstructionContent">Temel Talimat</label>
+                          <textarea id="baseInstructionContent" name="baseInstruction" rows="10" style="width: 100%;"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group form-buttons" style="margin-left: auto;">
+                          <button id="saveBaseInstructionBtn" class="save-new-btn">
+                            Güncelle
+                          </button>
+                          <button id="cancelBaseInstructionBtn" class="cancel-new-btn">
+                            İptal
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="detail-view" id="baseInstructionDetailView">
+                    <div class="detail-item">
+                      <div class="detail-label">Kod:</div>
+                      <div class="detail-value" id="baseInstructionCodeValue">-</div>
+                    </div>
+                    <div class="detail-item">
+                      <div class="detail-label">Açıklama:</div>
+                      <div class="detail-value" id="baseInstructionDescriptionValue">-</div>
+                    </div>
+                    <div class="detail-item">
+                      <div class="detail-label">Temel Talimat:</div>
+                      <div class="detail-value content-block" id="baseInstructionContentValue">-</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1940,6 +2055,8 @@
               fetchAssistantData();
             } else if (this.dataset.subtab === "subtab3") {
               fetchClassesData();
+            } else if (this.dataset.subtab === "subtab4") {
+              fetchBaseInstructionData();
             }
           });
         });
@@ -1958,6 +2075,8 @@
                   fetchAssistantData();
                 } else if (subtabId === "subtab3") {
                   fetchClassesData();
+                } else if (subtabId === "subtab4") {
+                  fetchBaseInstructionData();
                 }
               }
             }
@@ -2038,6 +2157,18 @@
             assistantIdCell.textContent = assistant.assistantId || "-";
             assistantIdCell.className = "assistant-id-cell";
 
+            // Aktif hücresi
+            const activeCell = document.createElement("td");
+            activeCell.className = "active-cell";
+            if (assistant.active === undefined) {
+              // Eski kayıtlarda active field yoksa varsayılan olarak true kabul et
+              activeCell.innerHTML = `<span class="status-badge active">Aktif</span>`;
+            } else {
+              activeCell.innerHTML = assistant.active ? 
+                `<span class="status-badge active">Aktif</span>` : 
+                `<span class="status-badge inactive">Pasif</span>`;
+            }
+
             // Oluşturulma tarihi hücresi
             const createdAtCell = document.createElement("td");
             createdAtCell.textContent = new Date(assistant.createdAt).toLocaleString("tr-TR");
@@ -2054,6 +2185,7 @@
             row.appendChild(languageCell);
             row.appendChild(instructionCell);
             row.appendChild(assistantIdCell);
+            row.appendChild(activeCell);
             row.appendChild(createdAtCell);
             row.appendChild(updatedAtCell);
 
@@ -2094,6 +2226,15 @@
             document.getElementById("newAssistantLanguage").value = assistant.language || "";
             document.getElementById("newAssistantId").value = assistant.assistantId || "";
             document.getElementById("newAssistantInstruction").value = assistant.instruction || "";
+            
+            // Active checkbox'u ayarla
+            const activeCheckbox = document.getElementById("newAssistantActive");
+            if (assistant.active === undefined) {
+              // Eski kayıtlarda active field yoksa varsayılan olarak true kabul et
+              activeCheckbox.checked = true;
+            } else {
+              activeCheckbox.checked = assistant.active;
+            }
             
             // Kaydet butonuna tıklandığında güncelleme yapacak şekilde ayarla
             const saveBtn = document.getElementById("saveNewAssistantBtn");
@@ -2179,6 +2320,7 @@
               language: document.getElementById("newAssistantLanguage").value.trim(),
               assistantId: document.getElementById("newAssistantId").value.trim(),
               instruction: document.getElementById("newAssistantInstruction").value.trim(),
+              active: document.getElementById("newAssistantActive").checked,
             };
 
             // Zorunlu alanları kontrol et
@@ -2233,6 +2375,7 @@
           document.getElementById("newAssistantLanguage").value = "";
           document.getElementById("newAssistantId").value = "";
           document.getElementById("newAssistantInstruction").value = "";
+          document.getElementById("newAssistantActive").checked = true; // Varsayılan olarak aktif
           
           // Kaydet butonunu sıfırla
           const saveBtn = document.getElementById("saveNewAssistantBtn");
@@ -2667,6 +2810,131 @@
           clearClassForm();
           toggleNewClassForm();
         });
+
+      // Base Instruction için fonksiyonlar
+      async function fetchBaseInstructionData() {
+        try {
+          // Sabit kod değeri ile endpoint'e istek yap
+          const response = await fetch(`${BASE_URL}/base-instruction/find/by-code?code=BASE_INSTRUCTION`);
+          if (!response.ok) {
+            throw new Error("Temel talimat verileri alınamadı");
+          }
+
+          const data = await response.json();
+          displayBaseInstructionData(data);
+        } catch (error) {
+          console.error("Temel talimat verileri çekme hatası:", error);
+          showBaseInstructionNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Temel talimat verilerini görüntüle
+      function displayBaseInstructionData(data) {
+        // Son güncelleme tarihini göster
+        const lastUpdateEl = document.getElementById("baseInstructionLastUpdate");
+        if (data.updatedAt) {
+          lastUpdateEl.textContent = new Date(data.updatedAt).toLocaleString("tr-TR");
+        } else {
+          lastUpdateEl.textContent = "-";
+        }
+
+        // Detay görünümünü doldur
+        document.getElementById("baseInstructionCodeValue").textContent = data.code || "-";
+        document.getElementById("baseInstructionDescriptionValue").textContent = data.description || "-";
+        document.getElementById("baseInstructionContentValue").textContent = data.baseInstruction || "-";
+
+        // Form alanlarını da doldur (düzenleme için)
+        document.getElementById("baseInstructionCode").value = data.code || "";
+        document.getElementById("baseInstructionDescription").value = data.description || "";
+        document.getElementById("baseInstructionContent").value = data.baseInstruction || "";
+
+        // Form için ID bilgisini sakla
+        const saveBtn = document.getElementById("saveBaseInstructionBtn");
+        saveBtn.dataset.id = data.id;
+      }
+
+      // Düzenle butonuna tıklandığında formu göster
+      function toggleBaseInstructionForm() {
+        const formContainer = document.getElementById("baseInstructionFormContainer");
+        formContainer.classList.toggle("hidden");
+      }
+
+      // Temel talimatı güncelle
+      async function saveBaseInstruction() {
+        try {
+          const id = document.getElementById("saveBaseInstructionBtn").dataset.id;
+          if (!id) {
+            throw new Error("Güncellenecek temel talimat bulunamadı");
+          }
+
+          // Form verilerini topla
+          const baseInstructionData = {
+            code: document.getElementById("baseInstructionCode").value.trim(),
+            description: document.getElementById("baseInstructionDescription").value.trim(),
+            baseInstruction: document.getElementById("baseInstructionContent").value.trim(),
+          };
+
+          // Zorunlu alanları kontrol et
+          if (!baseInstructionData.code) {
+            throw new Error("Kod alanı zorunludur");
+          }
+
+          if (!baseInstructionData.baseInstruction) {
+            throw new Error("Temel talimat alanı zorunludur");
+          }
+
+          // API'ye gönder (güncelleme)
+          const response = await fetch(`${BASE_URL}/base-instruction/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(baseInstructionData),
+          });
+
+          if (!response.ok) {
+            throw new Error("Temel talimat güncellenemedi");
+          }
+
+          // Başarı mesajı göster
+          showBaseInstructionNotification("success", "Temel talimat başarıyla güncellendi");
+
+          // Formu gizle ve verileri yenile
+          toggleBaseInstructionForm();
+          fetchBaseInstructionData();
+        } catch (error) {
+          console.error("Temel talimat güncelleme hatası:", error);
+          showBaseInstructionNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Bildirim gösterme fonksiyonu
+      function showBaseInstructionNotification(type, message) {
+        const notification = document.getElementById("baseInstructionNotification");
+        notification.textContent = message;
+        notification.className = type === "success" ? "success" : "error";
+        notification.classList.remove("hidden");
+        
+        // 3 saniye sonra bildirimi gizle
+        setTimeout(() => {
+          notification.classList.add("hidden");
+        }, 3000);
+      }
+
+      // Düzenle butonuna tıklanınca
+      document
+        .getElementById("editBaseInstructionBtn")
+        ?.addEventListener("click", toggleBaseInstructionForm);
+
+      // Güncelle butonuna tıklanınca
+      document
+        .getElementById("saveBaseInstructionBtn")
+        ?.addEventListener("click", saveBaseInstruction);
+
+      // İptal butonuna tıklanınca
+      document
+        .getElementById("cancelBaseInstructionBtn")
+        ?.addEventListener("click", toggleBaseInstructionForm);
     </script>
   </body>
 </html>
