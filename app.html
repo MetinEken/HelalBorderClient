@@ -733,7 +733,7 @@
     <div class="tab-container">
       <div class="tabs">
         <div class="tab" data-tab="tab1">Yapay Zeka Kelimeleri</div>
-        <div class="tab" data-tab="tab2">Barcode Kelimeler</div>
+        <div class="tab" data-tab="tab2">Lernen Ai</div>
         <div class="tab" data-tab="tab3">Token Kullanım</div>
         <div class="tab" data-tab="tab4">Hata Bildirimleri</div>
       </div>
@@ -789,8 +789,8 @@
 
           <!-- Barcode Kelimeler için alt tablar -->
           <div class="sub-tabs">
-            <div class="sub-tab active" data-subtab="subtab1">Alkol İçerik</div>
-            <div class="sub-tab" data-subtab="subtab2">Hayvansal İçerik</div>
+            <!-- <div class="sub-tab active" data-subtab="subtab1">Alkol İçerik</div> -->
+            <div class="sub-tab" data-subtab="subtab2">Assistant Ai</div>
             <div class="sub-tab" data-subtab="subtab3">E-Code</div>
             <div class="sub-tab" data-subtab="subtab4">Non-Alkol</div>
             <div class="sub-tab" data-subtab="subtab5">Domuz-Ürünleri</div>
@@ -964,16 +964,86 @@
               </div>
             </div>
 
-            <!-- Hayvansal İçerik -->
+            <!-- Hayvansal İçerik / Asistanlar -->
             <div id="subtab2" class="sub-tab-content">
-              <div class="content-box">
-                <h3>Hayvansal İçerikler</h3>
-                <p>Bu bölümde hayvansal içeriklerin listesi yer alacaktır.</p>
-                <textarea
-                  id="animalContent"
-                  placeholder="Hayvansal içerikleri buraya ekleyin..."
-                ></textarea>
-                <button class="save-button">Kaydet</button>
+              <div class="content-box" id="assistantAiContainer" style="width: 100%; max-width: 100%">
+                <h3>AI Asistanları</h3>
+                <div class="alkol-icerik-wrapper">
+                  <div class="header">
+                    <h3>AI Asistan Yönetimi</h3>
+                    <div class="actions-container">
+                      <button id="addNewAssistantBtn" class="add-new-btn">
+                        <i class="material-icons">add</i> Create New Assistant
+                      </button>
+                      <div class="stats">
+                        <div class="stat-item">
+                          <div class="stat-value" id="totalAssistants">0</div>
+                          <div class="stat-label">Toplam Asistan</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="assistantNotification" class="hidden"></div>
+
+                  <div id="newAssistantFormContainer" class="new-word-form-container hidden">
+                    <div class="new-word-form">
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newAssistantName">Asistan Adı</label>
+                          <textarea id="newAssistantName" name="name" rows="1"></textarea>
+                        </div>
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newAssistantLanguage">Dil</label>
+                          <textarea id="newAssistantLanguage" name="language" rows="1"></textarea>
+                        </div>
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newAssistantId">Asistan ID (Opsiyonel)</label>
+                          <textarea id="newAssistantId" name="assistantId" rows="1"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                          <label for="newAssistantInstruction">Talimatlar</label>
+                          <textarea id="newAssistantInstruction" name="instruction" rows="6" style="width: 100%;"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group form-buttons" style="margin-left: auto;">
+                          <button id="saveNewAssistantBtn" class="save-new-btn">
+                            Kaydet
+                          </button>
+                          <button id="cancelNewAssistantBtn" class="cancel-new-btn">
+                            İptal
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="table-container">
+                    <table id="assistantTable">
+                      <thead>
+                        <tr>
+                          <th class="action-cell">İşlemler</th>
+                          <th>Asistan Adı</th>
+                          <th>Dil</th>
+                          <th>Talimatlar</th>
+                          <th>Asistan ID</th>
+                          <th>Oluşturulma Tarihi</th>
+                          <th>Güncellenme Tarihi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="assistantTableBody">
+                        <tr>
+                          <td colspan="7" class="loading">
+                            Veriler yükleniyor...
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1794,6 +1864,8 @@
           tab.addEventListener("click", function () {
             if (this.dataset.subtab === "subtab1") {
               fetchAlkolData();
+            } else if (this.dataset.subtab === "subtab2") {
+              fetchAssistantData();
             }
           });
         });
@@ -1808,9 +1880,339 @@
                 .classList.contains("active")
             ) {
               fetchAlkolData();
+            } else if (
+              this.dataset.tab === "tab2" &&
+              document
+                .querySelector('.sub-tab[data-subtab="subtab2"]')
+                .classList.contains("active")
+            ) {
+              fetchAssistantData();
             }
           });
         });
+
+        // AI Asistanlar için fonksiyonlar
+        async function fetchAssistantData() {
+          try {
+            const response = await fetch(`${BASE_URL}/assistants-ai`);
+            if (!response.ok) {
+              throw new Error("Asistan verileri alınamadı");
+            }
+
+            const data = await response.json();
+            renderAssistantTable(data);
+            document.getElementById("totalAssistants").textContent = data.length;
+          } catch (error) {
+            console.error("Asistan verileri çekme hatası:", error);
+            showAssistantNotification("error", `Hata: ${error.message}`);
+          }
+        }
+
+        function renderAssistantTable(data) {
+          const tableBody = document.getElementById("assistantTableBody");
+          if (!tableBody) return;
+
+          if (data.length === 0) {
+            tableBody.innerHTML = `
+              <tr>
+                <td colspan="7" class="no-data">Kayıtlı asistan bulunamadı</td>
+              </tr>
+            `;
+            return;
+          }
+
+          tableBody.innerHTML = "";
+
+          data.forEach((assistant) => {
+            const row = document.createElement("tr");
+            row.dataset.id = assistant.id;
+
+            // İşlemler hücresi
+            const actionsCell = document.createElement("td");
+            actionsCell.className = "action-cell";
+            actionsCell.innerHTML = `
+              <div class="action-buttons">
+                <button class="action-btn edit-btn" data-id="${assistant.id}">
+                  <i class="material-icons">edit</i>
+                </button>
+                <button class="action-btn delete-btn" data-id="${assistant.id}">
+                  <i class="material-icons">delete</i>
+                </button>
+              </div>
+            `;
+
+            // Asistan adı hücresi
+            const nameCell = document.createElement("td");
+            nameCell.textContent = assistant.name;
+            nameCell.className = "name-cell";
+
+            // Dil hücresi
+            const languageCell = document.createElement("td");
+            languageCell.textContent = assistant.language || "-";
+            languageCell.className = "language-cell";
+
+            // Talimatlar hücresi (kısaltılmış)
+            const instructionCell = document.createElement("td");
+            instructionCell.className = "instruction-cell";
+            const instructionText = assistant.instruction || "";
+            instructionCell.textContent = instructionText.length > 100 
+              ? instructionText.substring(0, 100) + "..." 
+              : instructionText;
+            instructionCell.title = instructionText; // Tam metni tooltip olarak göster
+
+            // Asistan ID hücresi
+            const assistantIdCell = document.createElement("td");
+            assistantIdCell.textContent = assistant.assistantId || "-";
+            assistantIdCell.className = "assistant-id-cell";
+
+            // Oluşturulma tarihi hücresi
+            const createdAtCell = document.createElement("td");
+            createdAtCell.textContent = new Date(assistant.createdAt).toLocaleString("tr-TR");
+            createdAtCell.className = "date-cell";
+
+            // Güncellenme tarihi hücresi
+            const updatedAtCell = document.createElement("td");
+            updatedAtCell.textContent = new Date(assistant.updatedAt).toLocaleString("tr-TR");
+            updatedAtCell.className = "date-cell";
+
+            // Hücreleri satıra ekle
+            row.appendChild(actionsCell);
+            row.appendChild(nameCell);
+            row.appendChild(languageCell);
+            row.appendChild(instructionCell);
+            row.appendChild(assistantIdCell);
+            row.appendChild(createdAtCell);
+            row.appendChild(updatedAtCell);
+
+            // Satırı tabloya ekle
+            tableBody.appendChild(row);
+          });
+
+          // Düzenleme butonlarına olay dinleyicileri ekle
+          document.querySelectorAll(".edit-btn").forEach((btn) => {
+            btn.addEventListener("click", function() {
+              const id = this.dataset.id;
+              editAssistant(id);
+            });
+          });
+
+          // Silme butonlarına olay dinleyicileri ekle
+          document.querySelectorAll(".delete-btn").forEach((btn) => {
+            btn.addEventListener("click", function() {
+              const id = this.dataset.id;
+              deleteAssistant(id);
+            });
+          });
+        }
+
+        // Asistan düzenleme fonksiyonu
+        async function editAssistant(id) {
+          try {
+            const response = await fetch(`${BASE_URL}/assistants-ai/${id}`);
+            if (!response.ok) {
+              throw new Error("Asistan bilgileri alınamadı");
+            }
+
+            const assistant = await response.json();
+            
+            // Düzenleme formunu göster ve doldur
+            document.getElementById("newAssistantFormContainer").classList.remove("hidden");
+            document.getElementById("newAssistantName").value = assistant.name || "";
+            document.getElementById("newAssistantLanguage").value = assistant.language || "";
+            document.getElementById("newAssistantId").value = assistant.assistantId || "";
+            document.getElementById("newAssistantInstruction").value = assistant.instruction || "";
+            
+            // Kaydet butonuna tıklandığında güncelleme yapacak şekilde ayarla
+            const saveBtn = document.getElementById("saveNewAssistantBtn");
+            saveBtn.dataset.mode = "edit";
+            saveBtn.dataset.id = id;
+            saveBtn.textContent = "Güncelle";
+            
+            // Başlığı güncelle
+            const formTitle = document.querySelector("#newAssistantFormContainer .form-title");
+            if (!formTitle) {
+              const titleDiv = document.createElement("div");
+              titleDiv.className = "form-title";
+              titleDiv.textContent = "Asistan Düzenle";
+              document.getElementById("newAssistantFormContainer").prepend(titleDiv);
+            } else {
+              formTitle.textContent = "Asistan Düzenle";
+            }
+          } catch (error) {
+            console.error("Asistan düzenleme hatası:", error);
+            showAssistantNotification("error", `Hata: ${error.message}`);
+          }
+        }
+
+        // Asistan silme fonksiyonu
+        async function deleteAssistant(id) {
+          if (!confirm("Bu asistanı silmek istediğinize emin misiniz?")) {
+            return;
+          }
+
+          try {
+            const response = await fetch(`${BASE_URL}/assistants-ai/${id}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error("Asistan silinemedi");
+            }
+
+            showAssistantNotification("success", "Asistan başarıyla silindi");
+            fetchAssistantData(); // Tabloyu yenile
+          } catch (error) {
+            console.error("Asistan silme hatası:", error);
+            showAssistantNotification("error", `Hata: ${error.message}`);
+          }
+        }
+
+        // Yeni asistan ekleme formunu göster/gizle
+        function toggleNewAssistantForm() {
+          const formContainer = document.getElementById("newAssistantFormContainer");
+          formContainer.classList.toggle("hidden");
+
+          // Eğer form gösteriliyorsa ve düzenleme modunda değilse
+          if (!formContainer.classList.contains("hidden")) {
+            const saveBtn = document.getElementById("saveNewAssistantBtn");
+            if (saveBtn.dataset.mode !== "edit") {
+              // Form başlığını ekle veya güncelle
+              const formTitle = document.querySelector("#newAssistantFormContainer .form-title");
+              if (!formTitle) {
+                const titleDiv = document.createElement("div");
+                titleDiv.className = "form-title";
+                titleDiv.textContent = "Yeni Asistan Ekle";
+                formContainer.prepend(titleDiv);
+              } else {
+                formTitle.textContent = "Yeni Asistan Ekle";
+              }
+            }
+          }
+        }
+
+        // Yeni asistan ekleme veya mevcut asistanı güncelleme
+        async function saveAssistant() {
+          try {
+            const saveBtn = document.getElementById("saveNewAssistantBtn");
+            const isEditMode = saveBtn.dataset.mode === "edit";
+            const id = saveBtn.dataset.id;
+
+            // Form verilerini topla
+            const assistantData = {
+              name: document.getElementById("newAssistantName").value.trim(),
+              language: document.getElementById("newAssistantLanguage").value.trim(),
+              assistantId: document.getElementById("newAssistantId").value.trim(),
+              instruction: document.getElementById("newAssistantInstruction").value.trim(),
+            };
+
+            // Zorunlu alanları kontrol et
+            if (!assistantData.name) {
+              throw new Error("Asistan adı zorunludur");
+            }
+
+            if (!assistantData.instruction) {
+              throw new Error("Talimatlar zorunludur");
+            }
+
+            // API'ye gönder (ekleme veya güncelleme)
+            const url = isEditMode 
+              ? `${BASE_URL}/assistants-ai/${id}` 
+              : `${BASE_URL}/assistants-ai`;
+            
+            const method = isEditMode ? "PATCH" : "POST";
+
+            const response = await fetch(url, {
+              method: method,
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(assistantData),
+            });
+
+            if (!response.ok) {
+              throw new Error(isEditMode ? "Asistan güncellenemedi" : "Yeni asistan eklenemedi");
+            }
+
+            // Başarı mesajı göster
+            showAssistantNotification(
+              "success", 
+              isEditMode ? "Asistan başarıyla güncellendi" : "Yeni asistan başarıyla eklendi"
+            );
+
+            // Formu temizle ve gizle
+            clearAssistantForm();
+            toggleNewAssistantForm();
+
+            // Tabloyu yenile
+            fetchAssistantData();
+          } catch (error) {
+            console.error("Asistan kaydetme hatası:", error);
+            showAssistantNotification("error", `Hata: ${error.message}`);
+          }
+        }
+
+        // Asistan formunu temizle
+        function clearAssistantForm() {
+          document.getElementById("newAssistantName").value = "";
+          document.getElementById("newAssistantLanguage").value = "";
+          document.getElementById("newAssistantId").value = "";
+          document.getElementById("newAssistantInstruction").value = "";
+          
+          // Kaydet butonunu sıfırla
+          const saveBtn = document.getElementById("saveNewAssistantBtn");
+          saveBtn.dataset.mode = "add";
+          saveBtn.dataset.id = "";
+          saveBtn.textContent = "Kaydet";
+        }
+
+        // Bildirim gösterme fonksiyonu
+        function showAssistantNotification(type, message) {
+          const notification = document.getElementById("assistantNotification");
+          notification.textContent = message;
+          notification.className = type === "success" ? "success" : "error";
+          notification.classList.remove("hidden");
+          
+          // 3 saniye sonra bildirimi gizle
+          setTimeout(() => {
+            notification.classList.add("hidden");
+          }, 3000);
+        }
+
+        // Yeni asistan ekleme butonuna tıklanınca
+        document
+          .getElementById("addNewAssistantBtn")
+          ?.addEventListener("click", toggleNewAssistantForm);
+
+        // Kaydet butonuna tıklanınca
+        document
+          .getElementById("saveNewAssistantBtn")
+          ?.addEventListener("click", saveAssistant);
+
+        // İptal butonuna tıklanınca
+        document
+          .getElementById("cancelNewAssistantBtn")
+          ?.addEventListener("click", function () {
+            clearAssistantForm();
+            toggleNewAssistantForm();
+          });
+
+        // Sayfa yüklendiğinde verileri çek (hangi tab aktifse)
+        if (
+          document
+            .querySelector('.tab[data-tab="tab1"]')
+            .classList.contains("active")
+        ) {
+          fetchAndFillData();
+        } else if (
+          document
+            .querySelector('.tab[data-tab="tab3"]')
+            .classList.contains("active")
+        ) {
+          fetchTokenUsageData();
+        }
       });
     </script>
   </body>

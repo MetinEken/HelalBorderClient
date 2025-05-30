@@ -1,5 +1,6 @@
 // Çevre değişkenleri
 let BASE_URL = "https://chat-bot-api-126af91abc14.herokuapp.com";
+// let BASE_URL = "http://localhost:8080";
 
 // Geliştirme ortamında CORS sorunlarını önlemek için
 // Eğer localhost veya 127.0.0.1 üzerinde çalışıyorsa, CORS proxy kullanabiliriz
