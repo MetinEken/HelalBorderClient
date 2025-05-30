@@ -269,17 +269,40 @@
         display: flex;
         justify-content: space-around;
         margin-bottom: 2rem;
+      }
+
+      .token-stats-detailed {
+        margin-bottom: 2rem;
+      }
+
+      .token-stats-detailed h3 {
+        color: #333;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .detailed-stats-container {
+        display: flex;
         flex-wrap: wrap;
+        justify-content: space-around;
+        gap: 1rem;
       }
 
       .stat-box {
         background-color: #fff;
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         padding: 1.5rem;
         text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        flex: 1;
+        margin: 0 1rem;
         min-width: 200px;
-        margin: 1rem;
+      }
+
+      .token-stats-detailed .stat-box {
+        flex-basis: calc(50% - 2rem);
+        margin: 0;
       }
 
       .stat-box h3 {
@@ -288,11 +311,27 @@
         font-size: 1.2rem;
       }
 
+      .stat-box h4 {
+        margin-top: 0;
+        color: #333;
+        font-size: 1.1rem;
+      }
+
       .stat-value {
         font-size: 2rem;
         font-weight: bold;
         color: #007bff;
-        margin-top: 1rem;
+        margin: 1rem 0;
+      }
+      
+      .token-stats-detailed .stat-box:nth-child(1) .stat-value,
+      .token-stats-detailed .stat-box:nth-child(3) .stat-value {
+        color: #28a745; /* OpenAI için yeşil renk */
+      }
+      
+      .token-stats-detailed .stat-box:nth-child(2) .stat-value,
+      .token-stats-detailed .stat-box:nth-child(4) .stat-value {
+        color: #dc3545; /* Anthropic için kırmızı renk */
       }
 
       .token-table-container {
@@ -1340,6 +1379,47 @@
             </div>
           </div>
 
+          <!-- Detaylı Token İstatistikleri -->
+          <div class="token-stats-detailed">
+            <h3>Detaylı Token Kullanımı</h3>
+            <div class="detailed-stats-container">
+              <!-- Helal Kontrol Token Kullanımı -->
+              <div class="stat-box">
+                <h4>Helal Kontrol - OpenAI</h4>
+                <div class="stat-value" id="totalTokenCountOpenAiHelalControl">Yükleniyor...</div>
+              </div>
+              <div class="stat-box">
+                <h4>Helal Kontrol - Anthropic</h4>
+                <div class="stat-value" id="totalTokenCountAnthropicHelalControl">Yükleniyor...</div>
+              </div>
+              
+              <!-- Lernen AI Token Kullanımı -->
+              <div class="stat-box">
+                <h4>Lernen AI - OpenAI</h4>
+                <div class="stat-value" id="totalTokenCountOpenAiLernenAi">Yükleniyor...</div>
+              </div>
+              <div class="stat-box">
+                <h4>Lernen AI - Anthropic</h4>
+                <div class="stat-value" id="totalTokenCountAnthropicLernenAi">Yükleniyor...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kontrol Sayıları Detay -->
+          <div class="token-stats-detailed">
+            <h3>Detaylı Kontrol Sayıları</h3>
+            <div class="detailed-stats-container">
+              <div class="stat-box">
+                <h4>Helal Kontrol Çağrıları</h4>
+                <div class="stat-value" id="checkCallCount">Yükleniyor...</div>
+              </div>
+              <div class="stat-box">
+                <h4>Lernen AI Çağrıları</h4>
+                <div class="stat-value" id="checkCallCountLernenAi">Yükleniyor...</div>
+              </div>
+            </div>
+          </div>
+
           <!-- Son 1 Haftalık Grafik -->
           <div class="chart-container">
             <h3>Son 1 Haftalık Token Kullanımı</h3>
@@ -1364,13 +1444,18 @@
               <thead>
                 <tr>
                   <th>Tarih</th>
-                  <th>Token Sayısı</th>
-                  <th>Kontrol Sayısı</th>
+                  <th>Toplam Token</th>
+                  <th>Helal Kontrol OpenAI</th>
+                  <th>Helal Kontrol Anthropic</th>
+                  <th>Lernen AI OpenAI</th>
+                  <th>Lernen AI Anthropic</th>
+                  <th>Helal Kontrol Çağrı</th>
+                  <th>Lernen AI Çağrı</th>
                 </tr>
               </thead>
               <tbody id="tokenTableBody">
                 <tr>
-                  <td colspan="3" class="loading-message">
+                  <td colspan="8" class="loading-message">
                     Veriler yükleniyor...
                   </td>
                 </tr>
@@ -2985,6 +3070,149 @@
           console.error("Kullanıcı verileri çekme hatası:", error);
           showUsersNotification("error", `Hata: ${error.message}`);
         }
+      }
+
+      // Token kullanım verileri için fonksiyonlar
+      async function fetchTokenUsageData() {
+        try {
+          // Önce tüm yükleniyor yazılarını sıfır olarak göster
+          document.getElementById("totalTokenSum").textContent = "0";
+          document.getElementById("totalCheckCallSum").textContent = "0";
+          document.getElementById("totalTokenCountOpenAiHelalControl").textContent = "0";
+          document.getElementById("totalTokenCountAnthropicHelalControl").textContent = "0";
+          document.getElementById("totalTokenCountOpenAiLernenAi").textContent = "0";
+          document.getElementById("totalTokenCountAnthropicLernenAi").textContent = "0";
+          document.getElementById("checkCallCount").textContent = "0";
+          document.getElementById("checkCallCountLernenAi").textContent = "0";
+          
+          const response = await fetch(`${BASE_URL}/used-stor`);
+          if (!response.ok) {
+            throw new Error("Token kullanım verileri alınamadı");
+          }
+
+          const data = await response.json();
+          if (data && data.length > 0) {
+            // En son kaydı al
+            const latestData = data[0];
+            
+            // Toplam token sayısını göster
+            document.getElementById("totalTokenSum").textContent = latestData.totalTokenCount.toLocaleString();
+            
+            // Detaylı token sayılarını göster
+            document.getElementById("totalTokenCountOpenAiHelalControl").textContent = 
+              latestData.totalTokenCountOpenAiHelalControl.toLocaleString();
+            document.getElementById("totalTokenCountAnthropicHelalControl").textContent = 
+              latestData.totalTokenCountAnthropicHelalControl.toLocaleString();
+            document.getElementById("totalTokenCountOpenAiLernenAi").textContent = 
+              latestData.totalTokenCountOpenAiLernenAi.toLocaleString();
+            document.getElementById("totalTokenCountAnthropicLernenAi").textContent = 
+              latestData.totalTokenCountAnthropicLernenAi.toLocaleString();
+            
+            // Kontrol sayılarını göster
+            document.getElementById("totalCheckCallSum").textContent = 
+              (latestData.checkCallCount + latestData.checkCallCountLernenAi).toLocaleString();
+            document.getElementById("checkCallCount").textContent = 
+              latestData.checkCallCount.toLocaleString();
+            document.getElementById("checkCallCountLernenAi").textContent = 
+              latestData.checkCallCountLernenAi.toLocaleString();
+            
+            // Tabloyu doldur
+            renderTokenTable(data);
+            
+            // Grafik için veri hazırla ve çiz (isteğe bağlı)
+            // prepareAndDrawChart(data);
+          } else {
+            document.getElementById("tokenTableBody").innerHTML = `
+              <tr>
+                <td colspan="8" class="no-data">Kayıtlı token kullanım verisi bulunamadı</td>
+              </tr>
+            `;
+          }
+        } catch (error) {
+          console.error("Token kullanım verileri çekme hatası:", error);
+          document.getElementById("tokenTableBody").innerHTML = `
+            <tr>
+              <td colspan="8" class="error-message">Hata: ${error.message}</td>
+            </tr>
+          `;
+        }
+      }
+
+      // Token tablosunu oluştur
+      function renderTokenTable(data) {
+        const tableBody = document.getElementById("tokenTableBody");
+        if (!tableBody) return;
+
+        if (data.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="8" class="no-data">Kayıtlı token kullanım verisi bulunamadı</td>
+            </tr>
+          `;
+          return;
+        }
+
+        tableBody.innerHTML = "";
+
+        // Son 10 kaydı göster (en yeniden en eskiye)
+        const recentData = data.slice(0, 10);
+
+        recentData.forEach((item) => {
+          const row = document.createElement("tr");
+          
+          // Tarih hücresi
+          const dateCell = document.createElement("td");
+          dateCell.textContent = new Date(item.createdAt).toLocaleString("tr-TR");
+          dateCell.className = "date-cell";
+
+          // Toplam token hücresi
+          const totalTokenCell = document.createElement("td");
+          totalTokenCell.textContent = item.totalTokenCount.toLocaleString();
+          totalTokenCell.className = "token-cell";
+
+          // Helal Kontrol OpenAI token hücresi
+          const helalOpenAiCell = document.createElement("td");
+          helalOpenAiCell.textContent = item.totalTokenCountOpenAiHelalControl.toLocaleString();
+          helalOpenAiCell.className = "token-cell";
+
+          // Helal Kontrol Anthropic token hücresi
+          const helalAnthropicCell = document.createElement("td");
+          helalAnthropicCell.textContent = item.totalTokenCountAnthropicHelalControl.toLocaleString();
+          helalAnthropicCell.className = "token-cell";
+
+          // Lernen AI OpenAI token hücresi
+          const lernenOpenAiCell = document.createElement("td");
+          lernenOpenAiCell.textContent = item.totalTokenCountOpenAiLernenAi.toLocaleString();
+          lernenOpenAiCell.className = "token-cell";
+
+          // Lernen AI Anthropic token hücresi
+          const lernenAnthropicCell = document.createElement("td");
+          lernenAnthropicCell.textContent = item.totalTokenCountAnthropicLernenAi.toLocaleString();
+          lernenAnthropicCell.className = "token-cell";
+
+          // Helal Kontrol çağrı sayısı hücresi
+          const helalCallCell = document.createElement("td");
+          helalCallCell.textContent = item.checkCallCount.toLocaleString();
+          helalCallCell.className = "call-cell";
+
+          // Lernen AI çağrı sayısı hücresi
+          const lernenCallCell = document.createElement("td");
+          lernenCallCell.textContent = item.checkCallCountLernenAi.toLocaleString();
+          lernenCallCell.className = "call-cell";
+
+          // Hücreleri satıra ekle
+          row.appendChild(dateCell);
+          row.appendChild(totalTokenCell);
+          row.appendChild(helalOpenAiCell);
+          row.appendChild(helalAnthropicCell);
+          row.appendChild(lernenOpenAiCell);
+          row.appendChild(lernenAnthropicCell);
+          row.appendChild(helalCallCell);
+          row.appendChild(lernenCallCell);
+
+          // Satırı tabloya ekle
+          tableBody.appendChild(row);
+        });
       }
 
       // Kullanıcı tablosunu oluştur
