@@ -1047,16 +1047,88 @@
               </div>
             </div>
 
-            <!-- E-Code -->
+            <!-- Classes -->
             <div id="subtab3" class="sub-tab-content">
-              <div class="content-box">
-                <h3>E-Kodlar</h3>
-                <p>Bu bölümde E-Kodların listesi yer alacaktır.</p>
-                <textarea
-                  id="eCodeContent"
-                  placeholder="E-Kodları buraya ekleyin..."
-                ></textarea>
-                <button class="save-button">Kaydet</button>
+              <div class="content-box" id="classesContainer" style="width: 100%; max-width: 100%">
+                <h3>Sınıflar</h3>
+                <div class="alkol-icerik-wrapper">
+                  <div class="header">
+                    <h3>Sınıf Yönetimi</h3>
+                    <div class="actions-container">
+                      <button id="addNewClassBtn" class="add-new-btn">
+                        <i class="material-icons">add</i> Create New Class
+                      </button>
+                      <div class="stats">
+                        <div class="stat-item">
+                          <div class="stat-value" id="totalClasses">0</div>
+                          <div class="stat-label">Toplam Sınıf</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="classNotification" class="hidden"></div>
+
+                  <div id="newClassFormContainer" class="new-word-form-container hidden">
+                    <div class="new-word-form">
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newClassName">Sınıf Adı</label>
+                          <textarea id="newClassName" name="name" rows="1"></textarea>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                          <label for="newClassDescription">Açıklama</label>
+                          <textarea id="newClassDescription" name="description" rows="1"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                          <label for="newClassInstruction">Talimatlar</label>
+                          <textarea id="newClassInstruction" name="instruction" rows="6" style="width: 100%;"></textarea>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                          <label for="newClassAssistantId">Asistan Seç</label>
+                          <select id="newClassAssistantId" name="assistantId" style="width: 100%; padding: 8px; height: 40px;">
+                            <option value="">Asistan Seçiniz...</option>
+                          </select>
+                        </div>
+                        <div class="form-group form-buttons" style="margin-left: auto;">
+                          <button id="saveNewClassBtn" class="save-new-btn">
+                            Kaydet
+                          </button>
+                          <button id="cancelNewClassBtn" class="cancel-new-btn">
+                            İptal
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="table-container">
+                    <table id="classTable">
+                      <thead>
+                        <tr>
+                          <th class="action-cell">İşlemler</th>
+                          <th>Sınıf Adı</th>
+                          <th>Açıklama</th>
+                          <th>Talimatlar</th>
+                          <th>Asistan</th>
+                          <th>Oluşturulma Tarihi</th>
+                          <th>Güncellenme Tarihi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="classTableBody">
+                        <tr>
+                          <td colspan="7" class="loading">
+                            Veriler yükleniyor...
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1859,34 +1931,35 @@
           fetchTokenUsageData();
         }
 
-        // Alkol İçerik tablosu için alt sekme değiştirildiğinde veri çek
+        // Alt sekme değiştirildiğinde ilgili verileri çek
         document.querySelectorAll(".sub-tab").forEach((tab) => {
           tab.addEventListener("click", function () {
             if (this.dataset.subtab === "subtab1") {
               fetchAlkolData();
             } else if (this.dataset.subtab === "subtab2") {
               fetchAssistantData();
+            } else if (this.dataset.subtab === "subtab3") {
+              fetchClassesData();
             }
           });
         });
 
-        // Ana tab değiştirildiğinde, eğer Barcode Kelimeler tabı açıldıysa ve Alkol İçerik alt tabı aktifse veri çek
+        // Ana tab değiştirildiğinde, eğer Barcode Kelimeler tabı açıldıysa aktif alt tabın verilerini çek
         document.querySelectorAll(".tab").forEach((tab) => {
           tab.addEventListener("click", function () {
-            if (
-              this.dataset.tab === "tab2" &&
-              document
-                .querySelector('.sub-tab[data-subtab="subtab1"]')
-                .classList.contains("active")
-            ) {
-              fetchAlkolData();
-            } else if (
-              this.dataset.tab === "tab2" &&
-              document
-                .querySelector('.sub-tab[data-subtab="subtab2"]')
-                .classList.contains("active")
-            ) {
-              fetchAssistantData();
+            if (this.dataset.tab === "tab2") {
+              // Aktif alt tabı bul
+              const activeSubTab = document.querySelector('.sub-tab.active');
+              if (activeSubTab) {
+                const subtabId = activeSubTab.dataset.subtab;
+                if (subtabId === "subtab1") {
+                  fetchAlkolData();
+                } else if (subtabId === "subtab2") {
+                  fetchAssistantData();
+                } else if (subtabId === "subtab3") {
+                  fetchClassesData();
+                }
+              }
             }
           });
         });
@@ -2214,6 +2287,386 @@
           fetchTokenUsageData();
         }
       });
+
+      // Sınıflar için fonksiyonlar
+      async function fetchClassesData() {
+        try {
+          const response = await fetch(`${BASE_URL}/classes`);
+          if (!response.ok) {
+            throw new Error("Sınıf verileri alınamadı");
+          }
+
+          const data = await response.json();
+          renderClassTable(data);
+          document.getElementById("totalClasses").textContent = data.length;
+        } catch (error) {
+          console.error("Sınıf verileri çekme hatası:", error);
+          showClassNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Asistanları çekip dropdown menüye ekle
+      async function fetchAssistantsForDropdown() {
+        try {
+          const response = await fetch(`${BASE_URL}/assistants-ai/active`);
+          if (!response.ok) {
+            throw new Error("Asistan verileri alınamadı");
+          }
+
+          const assistants = await response.json();
+          const dropdown = document.getElementById("newClassAssistantId");
+          
+          // Dropdown'u temizle (ilk seçenek hariç)
+          while (dropdown.options.length > 1) {
+            dropdown.remove(1);
+          }
+
+          // Asistanları dropdown'a ekle
+          assistants.forEach(assistant => {
+            const option = document.createElement("option");
+            option.value = assistant.id;
+            option.textContent = `${assistant.name} (${assistant.language || 'Dil belirtilmedi'})`;  
+            dropdown.appendChild(option);
+          });
+
+          return assistants;
+        } catch (error) {
+          console.error("Asistan verileri çekme hatası:", error);
+          showClassNotification("error", `Hata: ${error.message}`);
+          return [];
+        }
+      }
+
+      // Asistan adını ID'ye göre bul
+      function findAssistantNameById(assistants, assistantId) {
+        const assistant = assistants.find(a => a.id === assistantId);
+        return assistant ? `${assistant.name} (${assistant.language || 'Dil belirtilmedi'})` : 'Asistan bulunamadı';
+      }
+
+      // Sınıf tablosunu oluştur
+      async function renderClassTable(classes) {
+        const tableBody = document.getElementById("classTableBody");
+        if (!tableBody) return;
+
+        if (classes.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7" class="no-data">Kayıtlı sınıf bulunamadı</td>
+            </tr>
+          `;
+          return;
+        }
+
+        // Tüm asistanları çek
+        const assistants = await fetchAssistantsForDropdown();
+
+        tableBody.innerHTML = "";
+
+        classes.forEach((classItem) => {
+          const row = document.createElement("tr");
+          row.dataset.id = classItem.id;
+
+          // İşlemler hücresi
+          const actionsCell = document.createElement("td");
+          actionsCell.className = "action-cell";
+          actionsCell.innerHTML = `
+            <div class="action-buttons">
+              <button class="action-btn edit-class-btn" data-id="${classItem.id}">
+                <i class="material-icons">edit</i>
+              </button>
+              <button class="action-btn delete-class-btn" data-id="${classItem.id}">
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+          `;
+
+          // Sınıf adı hücresi
+          const nameCell = document.createElement("td");
+          nameCell.textContent = classItem.name;
+          nameCell.className = "name-cell";
+
+          // Açıklama hücresi
+          const descriptionCell = document.createElement("td");
+          descriptionCell.textContent = classItem.description || "-";
+          descriptionCell.className = "description-cell";
+
+          // Talimatlar hücresi (kısaltılmış)
+          const instructionCell = document.createElement("td");
+          instructionCell.className = "instruction-cell";
+          const instructionText = classItem.instruction || "";
+          instructionCell.textContent = instructionText.length > 100 
+            ? instructionText.substring(0, 100) + "..." 
+            : instructionText;
+          instructionCell.title = instructionText; // Tam metni tooltip olarak göster
+
+          // Asistan hücresi
+          const assistantCell = document.createElement("td");
+          assistantCell.textContent = classItem.assistantId ? 
+            findAssistantNameById(assistants, classItem.assistantId) : "-";
+          assistantCell.className = "assistant-cell";
+
+          // Oluşturulma tarihi hücresi
+          const createdAtCell = document.createElement("td");
+          createdAtCell.textContent = new Date(classItem.createdAt).toLocaleString("tr-TR");
+          createdAtCell.className = "date-cell";
+
+          // Güncellenme tarihi hücresi
+          const updatedAtCell = document.createElement("td");
+          updatedAtCell.textContent = new Date(classItem.updatedAt).toLocaleString("tr-TR");
+          updatedAtCell.className = "date-cell";
+
+          // Hücreleri satıra ekle
+          row.appendChild(actionsCell);
+          row.appendChild(nameCell);
+          row.appendChild(descriptionCell);
+          row.appendChild(instructionCell);
+          row.appendChild(assistantCell);
+          row.appendChild(createdAtCell);
+          row.appendChild(updatedAtCell);
+
+          // Satırı tabloya ekle
+          tableBody.appendChild(row);
+        });
+
+        // Düzenleme butonlarına olay dinleyicileri ekle
+        document.querySelectorAll(".edit-class-btn").forEach((btn) => {
+          btn.addEventListener("click", function() {
+            const id = this.dataset.id;
+            editClass(id);
+          });
+        });
+
+        // Silme butonlarına olay dinleyicileri ekle
+        document.querySelectorAll(".delete-class-btn").forEach((btn) => {
+          btn.addEventListener("click", function() {
+            const id = this.dataset.id;
+            deleteClass(id);
+          });
+        });
+      }
+
+      // Sınıf düzenleme fonksiyonu
+      async function editClass(id) {
+        try {
+          const response = await fetch(`${BASE_URL}/classes/${id}`);
+          if (!response.ok) {
+            throw new Error("Sınıf bilgileri alınamadı");
+          }
+
+          const classItem = await response.json();
+          
+          // Asistanları çek ve dropdown'a ekle
+          await fetchAssistantsForDropdown();
+          
+          // Düzenleme formunu göster ve doldur
+          document.getElementById("newClassFormContainer").classList.remove("hidden");
+          document.getElementById("newClassName").value = classItem.name || "";
+          document.getElementById("newClassDescription").value = classItem.description || "";
+          document.getElementById("newClassInstruction").value = classItem.instruction || "";
+          
+          // Asistan seçimini ayarla
+          const assistantDropdown = document.getElementById("newClassAssistantId");
+          if (classItem.assistantId) {
+            for (let i = 0; i < assistantDropdown.options.length; i++) {
+              if (assistantDropdown.options[i].value === classItem.assistantId) {
+                assistantDropdown.selectedIndex = i;
+                break;
+              }
+            }
+          } else {
+            assistantDropdown.selectedIndex = 0;
+          }
+          
+          // Kaydet butonuna tıklandığında güncelleme yapacak şekilde ayarla
+          const saveBtn = document.getElementById("saveNewClassBtn");
+          saveBtn.dataset.mode = "edit";
+          saveBtn.dataset.id = id;
+          saveBtn.textContent = "Güncelle";
+          
+          // Başlığı güncelle
+          const formTitle = document.querySelector("#newClassFormContainer .form-title");
+          if (!formTitle) {
+            const titleDiv = document.createElement("div");
+            titleDiv.className = "form-title";
+            titleDiv.textContent = "Sınıf Düzenle";
+            document.getElementById("newClassFormContainer").prepend(titleDiv);
+          } else {
+            formTitle.textContent = "Sınıf Düzenle";
+          }
+        } catch (error) {
+          console.error("Sınıf düzenleme hatası:", error);
+          showClassNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Sınıf silme fonksiyonu
+      async function deleteClass(id) {
+        if (!confirm("Bu sınıfı silmek istediğinize emin misiniz?")) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${BASE_URL}/classes/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Sınıf silinemedi");
+          }
+
+          showClassNotification("success", "Sınıf başarıyla silindi");
+          fetchClassesData(); // Tabloyu yenile
+        } catch (error) {
+          console.error("Sınıf silme hatası:", error);
+          showClassNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Yeni sınıf ekleme formunu göster/gizle
+      async function toggleNewClassForm() {
+        const formContainer = document.getElementById("newClassFormContainer");
+        
+        // Form gösterilecekse ve gizliyse
+        if (formContainer.classList.contains("hidden")) {
+          // Önce asistanları çek
+          await fetchAssistantsForDropdown();
+          formContainer.classList.remove("hidden");
+          
+          // Form başlığını ekle veya güncelle
+          const saveBtn = document.getElementById("saveNewClassBtn");
+          if (saveBtn.dataset.mode !== "edit") {
+            const formTitle = document.querySelector("#newClassFormContainer .form-title");
+            if (!formTitle) {
+              const titleDiv = document.createElement("div");
+              titleDiv.className = "form-title";
+              titleDiv.textContent = "Yeni Sınıf Ekle";
+              formContainer.prepend(titleDiv);
+            } else {
+              formTitle.textContent = "Yeni Sınıf Ekle";
+            }
+          }
+        } else {
+          // Formu gizle
+          formContainer.classList.add("hidden");
+        }
+      }
+
+      // Yeni sınıf ekleme veya mevcut sınıfı güncelleme
+      async function saveClass() {
+        try {
+          const saveBtn = document.getElementById("saveNewClassBtn");
+          const isEditMode = saveBtn.dataset.mode === "edit";
+          const id = saveBtn.dataset.id;
+
+          // Form verilerini topla
+          const classData = {
+            name: document.getElementById("newClassName").value.trim(),
+            description: document.getElementById("newClassDescription").value.trim(),
+            instruction: document.getElementById("newClassInstruction").value.trim(),
+            assistantId: document.getElementById("newClassAssistantId").value,
+          };
+
+          // Zorunlu alanları kontrol et
+          if (!classData.name) {
+            throw new Error("Sınıf adı zorunludur");
+          }
+
+          if (!classData.instruction) {
+            throw new Error("Talimatlar zorunludur");
+          }
+          
+          if (!classData.description) {
+            throw new Error("Açıklama zorunludur");
+          }
+
+          if (!classData.assistantId) {
+            throw new Error("Bir asistan seçmelisiniz");
+          }
+
+          // API'ye gönder (ekleme veya güncelleme)
+          const url = isEditMode 
+            ? `${BASE_URL}/classes/${id}` 
+            : `${BASE_URL}/classes`;
+          
+          const method = isEditMode ? "PATCH" : "POST";
+
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(classData),
+          });
+
+          if (!response.ok) {
+            throw new Error(isEditMode ? "Sınıf güncellenemedi" : "Yeni sınıf eklenemedi");
+          }
+
+          // Başarı mesajı göster
+          showClassNotification(
+            "success", 
+            isEditMode ? "Sınıf başarıyla güncellendi" : "Yeni sınıf başarıyla eklendi"
+          );
+
+          // Formu temizle ve gizle
+          clearClassForm();
+          toggleNewClassForm();
+
+          // Tabloyu yenile
+          fetchClassesData();
+        } catch (error) {
+          console.error("Sınıf kaydetme hatası:", error);
+          showClassNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Sınıf formunu temizle
+      function clearClassForm() {
+        document.getElementById("newClassName").value = "";
+        document.getElementById("newClassDescription").value = "";
+        document.getElementById("newClassInstruction").value = "";
+        document.getElementById("newClassAssistantId").selectedIndex = 0;
+        
+        // Kaydet butonunu sıfırla
+        const saveBtn = document.getElementById("saveNewClassBtn");
+        saveBtn.dataset.mode = "add";
+        saveBtn.dataset.id = "";
+        saveBtn.textContent = "Kaydet";
+      }
+
+      // Bildirim gösterme fonksiyonu
+      function showClassNotification(type, message) {
+        const notification = document.getElementById("classNotification");
+        notification.textContent = message;
+        notification.className = type === "success" ? "success" : "error";
+        notification.classList.remove("hidden");
+        
+        // 3 saniye sonra bildirimi gizle
+        setTimeout(() => {
+          notification.classList.add("hidden");
+        }, 3000);
+      }
+
+      // Yeni sınıf ekleme butonuna tıklanınca
+      document
+        .getElementById("addNewClassBtn")
+        ?.addEventListener("click", toggleNewClassForm);
+
+      // Kaydet butonuna tıklanınca
+      document
+        .getElementById("saveNewClassBtn")
+        ?.addEventListener("click", saveClass);
+
+      // İptal butonuna tıklanınca
+      document
+        .getElementById("cancelNewClassBtn")
+        ?.addEventListener("click", function () {
+          clearClassForm();
+          toggleNewClassForm();
+        });
     </script>
   </body>
 </html>
