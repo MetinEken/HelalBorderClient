@@ -1262,16 +1262,46 @@
               </div>
             </div>
 
-            <!-- Domuz-Ürünleri -->
+            <!-- Kullanıcı Yönetimi -->
             <div id="subtab5" class="sub-tab-content">
-              <div class="content-box">
-                <h3>Domuz Ürünleri</h3>
-                <p>Bu bölümde domuz ürünlerinin listesi yer alacaktır.</p>
-                <textarea
-                  id="porkContent"
-                  placeholder="Domuz ürünlerini buraya ekleyin..."
-                ></textarea>
-                <button class="save-button">Kaydet</button>
+              <div class="content-box" id="usersContainer" style="width: 100%; max-width: 100%">
+                <h3>Kullanıcı Yönetimi</h3>
+                <div class="alkol-icerik-wrapper">
+                  <div class="header">
+                    <h3>Kullanıcı Listesi</h3>
+                    <div class="actions-container">
+                      <div class="stats">
+                        <div class="stat-item">
+                          <div class="stat-value" id="totalUsers">0</div>
+                          <div class="stat-label">Toplam Kullanıcı</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="usersNotification" class="hidden"></div>
+
+                  <div class="table-container">
+                    <table id="usersTable">
+                      <thead>
+                        <tr>
+                          <th>Kullanıcı Adı</th>
+                          <th>E-posta</th>
+                          <th>Kullanıcı Kodu</th>
+                          <th>Oluşturulma Tarihi</th>
+                          <th>Güncellenme Tarihi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="usersTableBody">
+                        <tr>
+                          <td colspan="5" class="loading">
+                            Veriler yükleniyor...
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2057,6 +2087,8 @@
               fetchClassesData();
             } else if (this.dataset.subtab === "subtab4") {
               fetchBaseInstructionData();
+            } else if (this.dataset.subtab === "subtab5") {
+              fetchUsersData();
             }
           });
         });
@@ -2077,6 +2109,8 @@
                   fetchClassesData();
                 } else if (subtabId === "subtab4") {
                   fetchBaseInstructionData();
+                } else if (subtabId === "subtab5") {
+                  fetchUsersData();
                 }
               }
             }
@@ -2935,6 +2969,92 @@
       document
         .getElementById("cancelBaseInstructionBtn")
         ?.addEventListener("click", toggleBaseInstructionForm);
+
+      // Kullanıcı yönetimi için fonksiyonlar
+      async function fetchUsersData() {
+        try {
+          const response = await fetch(`${BASE_URL}/users`);
+          if (!response.ok) {
+            throw new Error("Kullanıcı verileri alınamadı");
+          }
+
+          const data = await response.json();
+          renderUsersTable(data);
+          document.getElementById("totalUsers").textContent = data.length;
+        } catch (error) {
+          console.error("Kullanıcı verileri çekme hatası:", error);
+          showUsersNotification("error", `Hata: ${error.message}`);
+        }
+      }
+
+      // Kullanıcı tablosunu oluştur
+      function renderUsersTable(users) {
+        const tableBody = document.getElementById("usersTableBody");
+        if (!tableBody) return;
+
+        if (users.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="5" class="no-data">Kayıtlı kullanıcı bulunamadı</td>
+            </tr>
+          `;
+          return;
+        }
+
+        tableBody.innerHTML = "";
+
+        users.forEach((user) => {
+          const row = document.createElement("tr");
+          
+          // Kullanıcı adı hücresi
+          const nameCell = document.createElement("td");
+          nameCell.textContent = user.name || "-";
+          nameCell.className = "name-cell";
+
+          // E-posta hücresi
+          const emailCell = document.createElement("td");
+          emailCell.textContent = user.email || "-";
+          emailCell.className = "email-cell";
+
+          // Kullanıcı kodu hücresi
+          const userCodeCell = document.createElement("td");
+          userCodeCell.textContent = user.userCode || "-";
+          userCodeCell.className = "user-code-cell";
+
+          // Oluşturulma tarihi hücresi
+          const createdAtCell = document.createElement("td");
+          createdAtCell.textContent = new Date(user.createdAt).toLocaleString("tr-TR");
+          createdAtCell.className = "date-cell";
+
+          // Güncellenme tarihi hücresi
+          const updatedAtCell = document.createElement("td");
+          updatedAtCell.textContent = new Date(user.updatedAt).toLocaleString("tr-TR");
+          updatedAtCell.className = "date-cell";
+
+          // Hücreleri satıra ekle
+          row.appendChild(nameCell);
+          row.appendChild(emailCell);
+          row.appendChild(userCodeCell);
+          row.appendChild(createdAtCell);
+          row.appendChild(updatedAtCell);
+
+          // Satırı tabloya ekle
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Bildirim gösterme fonksiyonu
+      function showUsersNotification(type, message) {
+        const notification = document.getElementById("usersNotification");
+        notification.textContent = message;
+        notification.className = type === "success" ? "success" : "error";
+        notification.classList.remove("hidden");
+        
+        // 3 saniye sonra bildirimi gizle
+        setTimeout(() => {
+          notification.classList.add("hidden");
+        }, 3000);
+      }
     </script>
   </body>
 </html>
