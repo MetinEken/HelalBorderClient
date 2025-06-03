@@ -1234,6 +1234,10 @@
             <div id="subtab4" class="sub-tab-content">
               <div class="content-box" id="baseInstructionContainer" style="width: 100%; max-width: 100%">
                 <h3>Temel Talimat Yönetimi</h3>
+                <div class="button-group" style="margin: 10px 0; display: flex; gap: 10px;">
+                  <button id="baseCodeGrammerBtn" class="action-btn" style="background-color: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;" data-code="BaseCodeGrammer">Gramer Talimatı</button>
+                  <button id="baseCodeVoiceBtn" class="action-btn" style="background-color: #6c757d; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;" data-code="BaseCodeVoice">Ses Talimatı</button>
+                </div>
                 <div class="alkol-icerik-wrapper">
                   <div class="header">
                     <h3>Temel Talimat</h3>
@@ -2931,16 +2935,28 @@
         });
 
       // Base Instruction için fonksiyonlar
+      // Aktif kod değerini saklayacak değişken
+      let currentBaseCode = "BaseCodeGrammer";
+      
       async function fetchBaseInstructionData() {
         try {
-          // Sabit kod değeri ile endpoint'e istek yap
-          const response = await fetch(`${BASE_URL}/base-instruction/find/by-code?code=BASE_INSTRUCTION`);
+          // Değişken kod değeri ile endpoint'e istek yap
+          const response = await fetch(`${BASE_URL}/base-instruction/find/by-code/${currentBaseCode}`);
           if (!response.ok) {
             throw new Error("Temel talimat verileri alınamadı");
           }
 
           const data = await response.json();
           displayBaseInstructionData(data);
+          
+          // Aktif butonu vurgula
+          document.querySelectorAll('#baseCodeGrammerBtn, #baseCodeVoiceBtn').forEach(btn => {
+            if (btn.dataset.code === currentBaseCode) {
+              btn.style.backgroundColor = '#007bff';
+            } else {
+              btn.style.backgroundColor = '#6c757d';
+            }
+          });
         } catch (error) {
           console.error("Temel talimat verileri çekme hatası:", error);
           showBaseInstructionNotification("error", `Hata: ${error.message}`);
@@ -3044,6 +3060,22 @@
       document
         .getElementById("editBaseInstructionBtn")
         ?.addEventListener("click", toggleBaseInstructionForm);
+        
+      // Gramer Talimatı butonuna tıklanınca
+      document
+        .getElementById("baseCodeGrammerBtn")
+        ?.addEventListener("click", function() {
+          currentBaseCode = "BaseCodeGrammer";
+          fetchBaseInstructionData();
+        });
+        
+      // Ses Talimatı butonuna tıklanınca
+      document
+        .getElementById("baseCodeVoiceBtn")
+        ?.addEventListener("click", function() {
+          currentBaseCode = "BaseCodeVoice";
+          fetchBaseInstructionData();
+        });
 
       // Güncelle butonuna tıklanınca
       document
@@ -3143,7 +3175,7 @@
         const tableBody = document.getElementById("tokenTableBody");
         if (!tableBody) return;
 
-        if (data.length === 0) {
+        if (!Array.isArray(data) || data.length === 0) {
           tableBody.innerHTML = `
             <tr>
               <td colspan="8" class="no-data">Kayıtlı token kullanım verisi bulunamadı</td>
@@ -3159,52 +3191,65 @@
 
         recentData.forEach((item) => {
           const row = document.createElement("tr");
-          
+
+          // Yardımcı fonksiyonlar
+          const createCell = (value, className) => {
+            const cell = document.createElement("td");
+            cell.textContent = typeof value === 'number' ? value.toLocaleString('tr-TR') : value;
+            cell.className = className;
+            return cell;
+          };
+
           // Tarih hücresi
-          const dateCell = document.createElement("td");
-          dateCell.textContent = new Date(item.createdAt).toLocaleString("tr-TR");
-          dateCell.className = "date-cell";
+          const date = new Date(item.createdAt);
+          const formattedDate = date.toLocaleDateString("tr-TR", {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          });
 
-          // Toplam token hücresi
-          const totalTokenCell = document.createElement("td");
-          totalTokenCell.textContent = item.totalTokenCount.toLocaleString();
-          totalTokenCell.className = "token-cell";
-
-          // Helal Kontrol OpenAI token hücresi
-          const helalOpenAiCell = document.createElement("td");
-          helalOpenAiCell.textContent = item.totalTokenCountOpenAiHelalControl.toLocaleString();
-          helalOpenAiCell.className = "token-cell";
-
-          // Helal Kontrol Anthropic token hücresi
-          const helalAnthropicCell = document.createElement("td");
-          helalAnthropicCell.textContent = item.totalTokenCountAnthropicHelalControl.toLocaleString();
-          helalAnthropicCell.className = "token-cell";
-
-          // Lernen AI OpenAI token hücresi
-          const lernenOpenAiCell = document.createElement("td");
-          lernenOpenAiCell.textContent = item.totalTokenCountOpenAiLernenAi.toLocaleString();
-          lernenOpenAiCell.className = "token-cell";
-
-          // Lernen AI Anthropic token hücresi
-          const lernenAnthropicCell = document.createElement("td");
-          lernenAnthropicCell.textContent = item.totalTokenCountAnthropicLernenAi.toLocaleString();
-          lernenAnthropicCell.className = "token-cell";
-
-          // Helal Kontrol çağrı sayısı hücresi
-          const helalCallCell = document.createElement("td");
-          helalCallCell.textContent = item.checkCallCount.toLocaleString();
-          helalCallCell.className = "call-cell";
-
-          // Lernen AI çağrı sayısı hücresi
-          const lernenCallCell = document.createElement("td");
-          lernenCallCell.textContent = item.checkCallCountLernenAi.toLocaleString();
-          lernenCallCell.className = "call-cell";
+          // Hücreler
+          const cells = [
+            createCell(formattedDate, "date-cell"),
+            createCell((
+              (item.totalTokenCountOpenAiHelalControl || 0) +
+              (item.totalTokenCountAnthropicHelalControl || 0) +
+              (item.totalTokenCountOpenAiLernenAi || 0) +
+              (item.totalTokenCountAnthropicLernenAi || 0)
+            ), "token-cell"),
+            createCell(item.totalTokenCountOpenAiHelalControl || 0, "token-cell"),
+            createCell(item.totalTokenCountAnthropicHelalControl || 0, "token-cell"),
+            createCell(item.totalTokenCountOpenAiLernenAi || 0, "token-cell"),
+            createCell(item.totalTokenCountAnthropicLernenAi || 0, "token-cell"),
+            createCell(item.checkCallCount || 0, "call-cell"),
+            createCell(item.checkCallCountLernenAi || 0, "call-cell")
+          ];
 
           // Hücreleri satıra ekle
-          row.appendChild(dateCell);
-          row.appendChild(totalTokenCell);
-          row.appendChild(helalOpenAiCell);
-          row.appendChild(helalAnthropicCell);
+          cells.forEach(cell => row.appendChild(cell));
+
+          // Satırı tabloya ekle
+          tableBody.appendChild(row);
+          // Satırı tabloya ekle
+          tableBody.appendChild(row);
+const lernenOpenAiCell = createTokenCell(item.totalTokenCountOpenAiLernenAi);
+
+// Lernen AI Anthropic token hücresi
+const lernenAnthropicCell = createTokenCell(item.totalTokenCountAnthropicLernenAi);
+
+// Çağrı sayıları için hücreler
+const createCallCell = (value) => {
+const cell = document.createElement("td");
+cell.textContent = value.toLocaleString();
+cell.className = "call-cell";
+return cell;
+};
+
+// Helal Kontrol çağrı sayısı hücresi
+const helalCallCell = createCallCell(item.checkCallCount);
+
+// Lernen AI çağrı sayısı hücresi
+const lernenCallCell = createCallCell(item.checkCallCountLernenAi);
           row.appendChild(lernenOpenAiCell);
           row.appendChild(lernenAnthropicCell);
           row.appendChild(helalCallCell);
