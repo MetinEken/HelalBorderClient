@@ -1181,6 +1181,18 @@
                       </div>
                       <div class="form-row">
                         <div class="form-group" style="flex: 1;">
+                          <label for="newClassIcon">Sınıf İkonu</label>
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="file" id="newClassIcon" accept="image/*" style="flex: 1;">
+                            <div id="iconPreviewContainer" style="width: 100px; height: 100px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                              <img id="iconPreview" style="max-width: 100%; max-height: 100%; display: none;">
+                              <span id="noIconText">Resim yok</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
                           <label for="newClassInstruction">Talimatlar</label>
                           <textarea id="newClassInstruction" name="instruction" rows="6" style="width: 100%;"></textarea>
                         </div>
@@ -1209,6 +1221,7 @@
                       <thead>
                         <tr>
                           <th class="action-cell">İşlemler</th>
+                          <th>İkon</th>
                           <th>Sınıf Adı</th>
                           <th>Açıklama</th>
                           <th>Talimatlar</th>
@@ -2617,7 +2630,7 @@
         if (classes.length === 0) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="7" class="no-data">Kayıtlı sınıf bulunamadı</td>
+              <td colspan="8" class="no-data">Kayıtlı sınıf bulunamadı</td>
             </tr>
           `;
           return;
@@ -2645,6 +2658,15 @@
               </button>
             </div>
           `;
+
+          // İkon hücresi
+          const iconCell = document.createElement("td");
+          iconCell.className = "icon-cell";
+          if (classItem.icon) {
+            iconCell.innerHTML = `<img src="data:image/png;base64,${classItem.icon}" style="width: 100px; height: 100px; object-fit: contain;" alt="${classItem.name} ikonu">`;
+          } else {
+            iconCell.innerHTML = `<div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px dashed #ccc;"><i class="material-icons">image_not_supported</i></div>`;
+          }
 
           // Sınıf adı hücresi
           const nameCell = document.createElement("td");
@@ -2683,6 +2705,7 @@
 
           // Hücreleri satıra ekle
           row.appendChild(actionsCell);
+          row.appendChild(iconCell);
           row.appendChild(nameCell);
           row.appendChild(descriptionCell);
           row.appendChild(instructionCell);
@@ -2729,6 +2752,16 @@
           document.getElementById("newClassName").value = classItem.name || "";
           document.getElementById("newClassDescription").value = classItem.description || "";
           document.getElementById("newClassInstruction").value = classItem.instruction || "";
+          
+          // İkon varsa göster
+          if (classItem.icon) {
+            document.getElementById("iconPreview").src = `data:image/png;base64,${classItem.icon}`;
+            document.getElementById("iconPreview").style.display = "block";
+            document.getElementById("noIconText").style.display = "none";
+          } else {
+            document.getElementById("iconPreview").style.display = "none";
+            document.getElementById("noIconText").style.display = "block";
+          }
           
           // Asistan seçimini ayarla
           const assistantDropdown = document.getElementById("newClassAssistantId");
@@ -2833,6 +2866,8 @@
             description: document.getElementById("newClassDescription").value.trim(),
             instruction: document.getElementById("newClassInstruction").value.trim(),
             assistantId: document.getElementById("newClassAssistantId").value,
+            icon: document.getElementById("iconPreview").src && document.getElementById("iconPreview").style.display !== "none" ? 
+              document.getElementById("iconPreview").src.split(",")[1] : null, // Base64 formatında resim verisi
           };
 
           // Zorunlu alanları kontrol et
@@ -2896,6 +2931,12 @@
         document.getElementById("newClassInstruction").value = "";
         document.getElementById("newClassAssistantId").selectedIndex = 0;
         
+        // İkon önizlemeyi temizle
+        document.getElementById("iconPreview").src = "";
+        document.getElementById("iconPreview").style.display = "none";
+        document.getElementById("noIconText").style.display = "block";
+        document.getElementById("newClassIcon").value = "";
+        
         // Kaydet butonunu sıfırla
         const saveBtn = document.getElementById("saveNewClassBtn");
         saveBtn.dataset.mode = "add";
@@ -2933,6 +2974,33 @@
           clearClassForm();
           toggleNewClassForm();
         });
+        
+      // Resim yükleme işlevi
+      document.getElementById("newClassIcon")?.addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Sadece resim dosyalarını kabul et
+        if (!file.type.match('image.*')) {
+          alert('Lütfen bir resim dosyası seçin');
+          return;
+        }
+        
+        // Dosya boyutunu kontrol et (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Resim dosyası 2MB\'dan küçük olmalıdır');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imgPreview = document.getElementById("iconPreview");
+          imgPreview.src = e.target.result;
+          imgPreview.style.display = "block";
+          document.getElementById("noIconText").style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      });
 
       // Base Instruction için fonksiyonlar
       // Aktif kod değerini saklayacak değişken
