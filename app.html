@@ -1089,6 +1089,14 @@
                           <textarea id="newAssistantLanguage" name="language" rows="1"></textarea>
                         </div>
                         <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newAssistantLevel">Level</label>
+                          <textarea id="newAssistantLevel" name="level" rows="1"></textarea>
+                        </div>
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newAssistantOrder">Sıralama</label>
+                          <input type="number" id="newAssistantOrder" name="order" min="0" value="0">
+                        </div>
+                        <div class="form-group" style="flex: 0 0 300px;">
                           <label for="newAssistantId">Asistan ID (Opsiyonel)</label>
                           <textarea id="newAssistantId" name="assistantId" rows="1"></textarea>
                         </div>
@@ -1125,6 +1133,8 @@
                           <th class="action-cell">İşlemler</th>
                           <th>Asistan Adı</th>
                           <th>Dil</th>
+                          <th>Level</th>
+                          <th>Sıralama</th>
                           <th>Talimatlar</th>
                           <th>Asistan ID</th>
                           <th>Aktif</th>
@@ -1173,6 +1183,10 @@
                         <div class="form-group" style="flex: 0 0 300px;">
                           <label for="newClassName">Sınıf Adı</label>
                           <textarea id="newClassName" name="name" rows="1"></textarea>
+                        </div>
+                        <div class="form-group" style="flex: 0 0 300px;">
+                          <label for="newClassOrder">Sıralama</label>
+                          <input type="number" id="newClassOrder" name="order" min="0" value="0">
                         </div>
                         <div class="form-group" style="flex: 1;">
                           <label for="newClassDescription">Açıklama</label>
@@ -1224,6 +1238,7 @@
                           <th>İkon</th>
                           <th>Sınıf Adı</th>
                           <th>Açıklama</th>
+                          <th>Sıralama</th>
                           <th>Talimatlar</th>
                           <th>Asistan</th>
                           <th>Oluşturulma Tarihi</th>
@@ -2278,6 +2293,16 @@
             const languageCell = document.createElement("td");
             languageCell.textContent = assistant.language || "-";
             languageCell.className = "language-cell";
+            
+            // Level hücresi
+            const levelCell = document.createElement("td");
+            levelCell.textContent = assistant.level || "-";
+            levelCell.className = "level-cell";
+            
+            // Order (Sıralama) hücresi
+            const orderCell = document.createElement("td");
+            orderCell.textContent = assistant.order !== undefined ? assistant.order : "-";
+            orderCell.className = "order-cell";
 
             // Talimatlar hücresi (kısaltılmış)
             const instructionCell = document.createElement("td");
@@ -2319,6 +2344,8 @@
             row.appendChild(actionsCell);
             row.appendChild(nameCell);
             row.appendChild(languageCell);
+            row.appendChild(levelCell);
+            row.appendChild(orderCell);
             row.appendChild(instructionCell);
             row.appendChild(assistantIdCell);
             row.appendChild(activeCell);
@@ -2360,6 +2387,8 @@
             document.getElementById("newAssistantFormContainer").classList.remove("hidden");
             document.getElementById("newAssistantName").value = assistant.name || "";
             document.getElementById("newAssistantLanguage").value = assistant.language || "";
+            document.getElementById("newAssistantLevel").value = assistant.level || "";
+            document.getElementById("newAssistantOrder").value = assistant.order !== undefined ? assistant.order : 0;
             document.getElementById("newAssistantId").value = assistant.assistantId || "";
             document.getElementById("newAssistantInstruction").value = assistant.instruction || "";
             
@@ -2454,6 +2483,8 @@
             const assistantData = {
               name: document.getElementById("newAssistantName").value.trim(),
               language: document.getElementById("newAssistantLanguage").value.trim(),
+              level: document.getElementById("newAssistantLevel").value.trim(),
+              order: parseInt(document.getElementById("newAssistantOrder").value) || 0,
               assistantId: document.getElementById("newAssistantId").value.trim(),
               instruction: document.getElementById("newAssistantInstruction").value.trim(),
               active: document.getElementById("newAssistantActive").checked,
@@ -2509,6 +2540,8 @@
         function clearAssistantForm() {
           document.getElementById("newAssistantName").value = "";
           document.getElementById("newAssistantLanguage").value = "";
+          document.getElementById("newAssistantLevel").value = "";
+          document.getElementById("newAssistantOrder").value = 0; // Varsayılan olarak 0
           document.getElementById("newAssistantId").value = "";
           document.getElementById("newAssistantInstruction").value = "";
           document.getElementById("newAssistantActive").checked = true; // Varsayılan olarak aktif
@@ -2677,6 +2710,11 @@
           const descriptionCell = document.createElement("td");
           descriptionCell.textContent = classItem.description || "-";
           descriptionCell.className = "description-cell";
+          
+          // Order (Sıralama) hücresi
+          const orderCell = document.createElement("td");
+          orderCell.textContent = classItem.order !== undefined ? classItem.order : "-";
+          orderCell.className = "order-cell";
 
           // Talimatlar hücresi (kısaltılmış)
           const instructionCell = document.createElement("td");
@@ -2708,6 +2746,7 @@
           row.appendChild(iconCell);
           row.appendChild(nameCell);
           row.appendChild(descriptionCell);
+          row.appendChild(orderCell);
           row.appendChild(instructionCell);
           row.appendChild(assistantCell);
           row.appendChild(createdAtCell);
@@ -2750,6 +2789,7 @@
           // Düzenleme formunu göster ve doldur
           document.getElementById("newClassFormContainer").classList.remove("hidden");
           document.getElementById("newClassName").value = classItem.name || "";
+          document.getElementById("newClassOrder").value = classItem.order !== undefined ? classItem.order : 0;
           document.getElementById("newClassDescription").value = classItem.description || "";
           document.getElementById("newClassInstruction").value = classItem.instruction || "";
           
@@ -2864,6 +2904,7 @@
           const classData = {
             name: document.getElementById("newClassName").value.trim(),
             description: document.getElementById("newClassDescription").value.trim(),
+            order: parseInt(document.getElementById("newClassOrder").value) || 0,
             instruction: document.getElementById("newClassInstruction").value.trim(),
             assistantId: document.getElementById("newClassAssistantId").value,
             icon: document.getElementById("iconPreview").src && document.getElementById("iconPreview").style.display !== "none" ? 
@@ -2927,6 +2968,7 @@
       // Sınıf formunu temizle
       function clearClassForm() {
         document.getElementById("newClassName").value = "";
+        document.getElementById("newClassOrder").value = 0; // Varsayılan olarak 0
         document.getElementById("newClassDescription").value = "";
         document.getElementById("newClassInstruction").value = "";
         document.getElementById("newClassAssistantId").selectedIndex = 0;
