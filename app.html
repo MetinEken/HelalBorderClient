@@ -885,7 +885,8 @@
             <div class="sub-tab" data-subtab="subtab3">Classes</div>
             <div class="sub-tab" data-subtab="subtab4">Base Instruction</div>
             <div class="sub-tab" data-subtab="subtab5">Lernen-Ai Users</div>
-            <!-- <div class="sub-tab" data-subtab="subtab6">Helal-Hayvansal</div> -->
+            <div class="sub-tab" data-subtab="subtab6">AI Ayarları</div>
+            <!-- <div class="sub-tab" data-subtab="subtab7">Helal-Hayvansal</div> -->
           </div>
 
           <!-- Alt tab içerikleri -->
@@ -1155,6 +1156,25 @@
               </div>
             </div>
 
+            <!-- AI Ayarları -->
+            <div id="subtab6" class="sub-tab-content">
+              <div class="content-box" id="aiSettingsContainer" style="width: 100%; max-width: 100%">
+                <h3>AI Ayarları</h3>
+                <div class="ai-settings-wrapper" style="padding: 20px;">
+                  <div class="ai-setting-item" style="display: flex; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <div class="ai-setting-label" style="font-weight: bold; width: 120px;">AI Model:</div>
+                    <div class="ai-setting-value" id="aiModelValue" style="flex-grow: 1; margin: 0 15px;">Yükleniyor...</div>
+                    <button class="change-button" id="changeAiModelBtn" style="padding: 8px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Değiştir</button>
+                  </div>
+                  <div class="ai-setting-item" style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <div class="ai-setting-label" style="font-weight: bold; width: 120px;">TTS Sistemi:</div>
+                    <div class="ai-setting-value" id="ttsSystemValue" style="flex-grow: 1; margin: 0 15px;">Yükleniyor...</div>
+                    <button class="change-button" id="changeTtsSystemBtn" style="padding: 8px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Değiştir</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <!-- Classes -->
             <div id="subtab3" class="sub-tab-content">
               <div class="content-box" id="classesContainer" style="width: 100%; max-width: 100%">
@@ -1592,6 +1612,100 @@
           });
         */
 
+        // AI Ayarları için fonksiyonlar
+        async function fetchAiSettings() {
+          try {
+            // AI Model bilgisini çek
+            const aiModelRes = await fetch(`${BASE_URL}/voice-ai/get-ai-model`);
+            if (aiModelRes.ok) {
+              const aiModel = await aiModelRes.text();
+              document.getElementById('aiModelValue').innerText = aiModel;
+            } else {
+              document.getElementById('aiModelValue').innerText = 'Yüklenemedi';
+            }
+            
+            // TTS Sistem bilgisini çek
+            const ttsSystemRes = await fetch(`${BASE_URL}/voice-ai/get-tts-system`);
+            if (ttsSystemRes.ok) {
+              const ttsSystem = await ttsSystemRes.text();
+              document.getElementById('ttsSystemValue').innerText = ttsSystem;
+            } else {
+              document.getElementById('ttsSystemValue').innerText = 'Yüklenemedi';
+            }
+          } catch (err) {
+            console.error('AI ayarları yüklenirken hata:', err);
+          }
+        }
+        
+        // AI Model değiştirme fonksiyonu
+        async function changeAiModel() {
+          const currentModel = document.getElementById('aiModelValue').innerText;
+          const newModel = currentModel === 'openai' ? 'claude' : 'openai';
+          
+          try {
+            const response = await fetch(`${BASE_URL}/voice-ai/set-ai-model`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ aiType: newModel })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                document.getElementById('aiModelValue').innerText = newModel;
+                alert('AI model başarıyla değiştirildi: ' + newModel);
+              } else {
+                alert('AI model değiştirilemedi!');
+              }
+            } else {
+              alert('AI model değiştirilemedi! Sunucu hatası.');
+            }
+          } catch (err) {
+            console.error('AI model değiştirirken hata:', err);
+            alert('AI model değiştirilemedi! Hata: ' + err.message);
+          }
+        }
+        
+        // TTS Sistem değiştirme fonksiyonu
+        async function changeTtsSystem() {
+          const currentSystem = document.getElementById('ttsSystemValue').innerText;
+          const newSystem = currentSystem === 'system' ? 'ttsApi' : 'system';
+          
+          try {
+            const response = await fetch(`${BASE_URL}/voice-ai/change-tts-system`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ ttsSystem: newSystem })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                document.getElementById('ttsSystemValue').innerText = newSystem;
+                alert('TTS sistemi başarıyla değiştirildi: ' + newSystem);
+              } else {
+                alert('TTS sistemi değiştirilemedi!');
+              }
+            } else {
+              alert('TTS sistemi değiştirilemedi! Sunucu hatası.');
+            }
+          } catch (err) {
+            console.error('TTS sistemi değiştirirken hata:', err);
+            alert('TTS sistemi değiştirilemedi! Hata: ' + err.message);
+          }
+        }
+        
+        // Event listener'ları ekle
+        document.getElementById('changeAiModelBtn').addEventListener('click', changeAiModel);
+        document.getElementById('changeTtsSystemBtn').addEventListener('click', changeTtsSystem);
+        
+        // Sayfa yüklendiğinde AI ayarlarını çek
+        fetchAiSettings();
+        
         // Verileri çek ve textarea'lara yerleştir
         async function fetchAndFillData() {
           try {
@@ -1709,15 +1823,42 @@
             // Toplam değerleri hesapla
             let tokenSumTotal = 0;
             let checkCallSumTotal = 0;
+            let totalTokenCountOpenAiHelalControlSum = 0;
+            let totalTokenCountAnthropicHelalControlSum = 0;
+            let totalTokenCountOpenAiLernenAiSum = 0;
+            let totalTokenCountAnthropicLernenAiSum = 0;
+            let checkCallCountSum = 0;
+            let checkCallCountLernenAiSum = 0;
 
             data.forEach((item) => {
-              tokenSumTotal += item.totalTokenCount;
-              checkCallSumTotal += item.checkCallCount;
+              // Ana toplam değerler
+              tokenSumTotal += item.totalTokenCount || 0;
+              checkCallSumTotal += item.checkCallCount || 0;
+              
+              // Detaylı token kullanımı değerleri
+              totalTokenCountOpenAiHelalControlSum += item.totalTokenCountOpenAiHelalControl || 0;
+              totalTokenCountAnthropicHelalControlSum += item.totalTokenCountAnthropicHelalControl || 0;
+              totalTokenCountOpenAiLernenAiSum += item.totalTokenCountOpenAiLernenAi || 0;
+              totalTokenCountAnthropicLernenAiSum += item.totalTokenCountAnthropicLernenAi || 0;
+              
+              // Detaylı kontrol sayıları
+              checkCallCountSum += item.checkCallCount || 0;
+              checkCallCountLernenAiSum += item.checkCallCountLernenAi || 0;
             });
 
             // Toplam değerleri göster
             totalTokenSum.innerText = tokenSumTotal.toLocaleString();
             totalCheckCallSum.innerText = checkCallSumTotal.toLocaleString();
+            
+            // Detaylı token kullanımı değerlerini göster
+            document.getElementById("totalTokenCountOpenAiHelalControl").innerText = totalTokenCountOpenAiHelalControlSum.toLocaleString();
+            document.getElementById("totalTokenCountAnthropicHelalControl").innerText = totalTokenCountAnthropicHelalControlSum.toLocaleString();
+            document.getElementById("totalTokenCountOpenAiLernenAi").innerText = totalTokenCountOpenAiLernenAiSum.toLocaleString();
+            document.getElementById("totalTokenCountAnthropicLernenAi").innerText = totalTokenCountAnthropicLernenAiSum.toLocaleString();
+            
+            // Detaylı kontrol sayılarını göster
+            document.getElementById("checkCallCount").innerText = checkCallCountSum.toLocaleString();
+            document.getElementById("checkCallCountLernenAi").innerText = checkCallCountLernenAiSum.toLocaleString();
 
             // Son 7 gün için tarih aralığı oluştur (bugün dahil)
             const today = new Date();
@@ -1867,8 +2008,8 @@
 
                 row.innerHTML = `
                   <td>${formattedDate}</td>
-                  <td>${item.totalTokenCount.toLocaleString()}</td>
-                  <td>${item.checkCallCount.toLocaleString()}</td>
+                  <td>${(item.totalTokenCount || 0).toLocaleString()}</td>
+                  <td>${(item.checkCallCount || 0).toLocaleString()}</td>
                 `;
 
                 tokenTableBody.appendChild(row);
