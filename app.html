@@ -1377,15 +1377,16 @@
                       <thead>
                         <tr>
                           <th>Kullanıcı Adı</th>
-                          <th>E-posta</th>
                           <th>Kullanıcı Kodu</th>
+                          <th>Platform</th>
+                          <th>Hedef Dil</th>
+                          <th>Ana Dil</th>
                           <th>Oluşturulma Tarihi</th>
-                          <th>Güncellenme Tarihi</th>
                         </tr>
                       </thead>
                       <tbody id="usersTableBody">
                         <tr>
-                          <td colspan="5" class="loading">
+                          <td colspan="6" class="loading">
                             Veriler yükleniyor...
                           </td>
                         </tr>
@@ -3519,7 +3520,7 @@ const lernenCallCell = createCallCell(item.checkCallCountLernenAi);
         if (users.length === 0) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="5" class="no-data">Kayıtlı kullanıcı bulunamadı</td>
+              <td colspan="6" class="no-data">Kayıtlı kullanıcı bulunamadı</td>
             </tr>
           `;
           return;
@@ -3527,7 +3528,18 @@ const lernenCallCell = createCallCell(item.checkCallCountLernenAi);
 
         tableBody.innerHTML = "";
 
-        users.forEach((user) => {
+        // Kullanıcı koduna göre azalan sıralama (en yüksek önce)
+        const sortedUsers = [...users].sort((a, b) => {
+          const codeA = Number(a.userCode);
+          const codeB = Number(b.userCode);
+          // Sayı değilse en sona it
+          if (isNaN(codeA) && isNaN(codeB)) return 0;
+          if (isNaN(codeA)) return 1;
+          if (isNaN(codeB)) return -1;
+          return codeB - codeA;
+        });
+
+        sortedUsers.forEach((user) => {
           const row = document.createElement("tr");
           
           // Kullanıcı adı hücresi
@@ -3535,32 +3547,38 @@ const lernenCallCell = createCallCell(item.checkCallCountLernenAi);
           nameCell.textContent = user.name || "-";
           nameCell.className = "name-cell";
 
-          // E-posta hücresi
-          const emailCell = document.createElement("td");
-          emailCell.textContent = user.email || "-";
-          emailCell.className = "email-cell";
-
           // Kullanıcı kodu hücresi
           const userCodeCell = document.createElement("td");
           userCodeCell.textContent = user.userCode || "-";
           userCodeCell.className = "user-code-cell";
+
+          // Platform hücresi
+          const platformCell = document.createElement("td");
+          platformCell.textContent = user.platform || "-";
+          platformCell.className = "platform-cell";
+
+          // Hedef dil (targetLanguage) hücresi
+          const targetLanguageCell = document.createElement("td");
+          targetLanguageCell.textContent = user.targetLanguage || "-";
+          targetLanguageCell.className = "target-language-cell";
+
+          // Ana dil (nativeLanguage) hücresi
+          const nativeLanguageCell = document.createElement("td");
+          nativeLanguageCell.textContent = user.nativeLanguage || "-";
+          nativeLanguageCell.className = "native-language-cell";
 
           // Oluşturulma tarihi hücresi
           const createdAtCell = document.createElement("td");
           createdAtCell.textContent = new Date(user.createdAt).toLocaleString("tr-TR");
           createdAtCell.className = "date-cell";
 
-          // Güncellenme tarihi hücresi
-          const updatedAtCell = document.createElement("td");
-          updatedAtCell.textContent = new Date(user.updatedAt).toLocaleString("tr-TR");
-          updatedAtCell.className = "date-cell";
-
           // Hücreleri satıra ekle
           row.appendChild(nameCell);
-          row.appendChild(emailCell);
           row.appendChild(userCodeCell);
+          row.appendChild(platformCell);
+          row.appendChild(targetLanguageCell);
+          row.appendChild(nativeLanguageCell);
           row.appendChild(createdAtCell);
-          row.appendChild(updatedAtCell);
 
           // Satırı tabloya ekle
           tableBody.appendChild(row);
