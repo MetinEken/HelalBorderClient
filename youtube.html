@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Videolar Yönetimi</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background:#f7f7f7; }
+    .container { max-width: 1200px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); padding: 20px; }
+    h2 { margin-top: 0; }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+    .actions input[type="text"] { padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; min-width: 240px; }
+    .actions button, .form-actions button { padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; background:#007bff; color:#fff; }
+    .actions .secondary { background:#6c757d; }
+    .actions .danger { background:#dc3545; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(250px, 1fr)); gap: 14px; }
+    .form-group { display:flex; flex-direction:column; }
+    .form-group label { font-weight: 600; margin-bottom: 6px; }
+    .form-group input[type="text"], .form-group input[type="url"], .form-group input[type="number"], .form-group textarea, .form-group select {
+      padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;
+    }
+    .form-group textarea { min-height: 80px; }
+    .form-actions { display:flex; gap:10px; margin-top: 10px; justify-content: flex-end; }
+    .switch { display:flex; align-items:center; gap: 8px; }
+
+    table { width: 100%; border-collapse: collapse; background:#fff; }
+    thead th { position: sticky; top: 0; background:#fafafa; z-index: 1; }
+    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; font-size: 14px; vertical-align: top; }
+    .table-wrapper { max-height: 60vh; overflow: auto; border: 1px solid #eee; border-radius: 6px; }
+    .action-cell { display:flex; gap:6px; }
+    .btn-icon { background: #eee; border: none; padding: 6px 8px; border-radius: 4px; cursor: pointer; }
+    .btn-icon.edit { background:#17a2b8; color: #fff; }
+    .btn-icon.delete { background:#dc3545; color: #fff; }
+    .status { margin: 8px 0; }
+    .status.success { color:#28a745; }
+    .status.error { color:#dc3545; }
+  </style>
+  <script src="env.js"></script>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>YouTube Videolar Yönetimi</h2>
+
+    <div id="status" class="status" aria-live="polite"></div>
+
+    <div class="actions">
+      <input type="text" id="searchText" placeholder="Başlık / YouTube URL ara..." />
+      <select id="searchLanguage">
+        <option value="">Dil (id) - opsiyonel</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <button id="btnSearch" class="secondary">Ara</button>
+      <button id="btnNew">Yeni Video</button>
+      <button id="btnReload" class="secondary">Yenile</button>
+    </div>
+
+    <div id="formPanel" class="panel" style="display:none;">
+      <h3 id="formTitle">Yeni Video</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="youtubeUrl">YouTube URL</label>
+          <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." />
+        </div>
+        <div class="form-group">
+          <label for="awsUrl">AWS URL</label>
+          <input type="url" id="awsUrl" placeholder="https://s3..." />
+        </div>
+        <div class="form-group">
+          <label for="baseStoryId">Base Story Id</label>
+          <input type="text" id="baseStoryId" />
+        </div>
+        <div class="form-group">
+          <label for="title">Başlık</label>
+          <input type="text" id="title" />
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="story">Hikaye</label>
+          <textarea id="story"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="type">Tür</label>
+          <input type="text" id="type" />
+        </div>
+        <div class="form-group">
+          <label for="languageId">Dil Id</label>
+          <input type="number" id="languageId" />
+        </div>
+        <div class="form-group">
+          <label for="assistantId">Asistan Id</label>
+          <input type="text" id="assistantId" />
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="basePromt">Base Prompt</label>
+          <textarea id="basePromt"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="coverImageUrl">Kapak Resmi URL</label>
+          <input type="url" id="coverImageUrl" />
+        </div>
+        <div class="form-group switch">
+          <label for="active">Aktif</label>
+          <input type="checkbox" id="active" checked />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="btnSave">Kaydet</button>
+        <button id="btnCancel" class="secondary">İptal</button>
+        <button id="btnDelete" class="danger" style="display:none;">Sil</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>İşlem</th>
+            <th>Başlık</th>
+            <th>YouTube</th>
+            <th>Tür</th>
+            <th>Dil</th>
+            <th>Aktif</th>
+            <th>Oluşturma</th>
+            <th>Güncelleme</th>
+          </tr>
+        </thead>
+        <tbody id="gridBody">
+          <tr><td colspan="8">Veriler yükleniyor...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Basit durum yönetimi
+    let editingId = null;
+
+    function showStatus(type, message) {
+      const el = document.getElementById('status');
+      el.className = `status ${type}`;
+      el.textContent = message;
+    }
+
+    function dtoFromForm() {
+      return {
+        youtubeUrl: document.getElementById('youtubeUrl').value.trim(),
+        awsUrl: emptyToNull(document.getElementById('awsUrl').value),
+        baseStoryId: emptyToNull(document.getElementById('baseStoryId').value),
+        title: document.getElementById('title').value.trim(),
+        story: emptyToNull(document.getElementById('story').value),
+        characters: null, // Basitlik için opsiyonel bıraktık
+        type: emptyToNull(document.getElementById('type').value),
+        languageId: numberOrNull(document.getElementById('languageId').value),
+        assistantId: emptyToNull(document.getElementById('assistantId').value),
+        basePromt: emptyToNull(document.getElementById('basePromt').value),
+        coverImageUrl: emptyToNull(document.getElementById('coverImageUrl').value),
+        active: document.getElementById('active').checked,
+      };
+    }
+
+    function emptyToNull(v){ const t = (v||'').trim(); return t === '' ? null : t; }
+    function numberOrNull(v){ const t = (v||'').trim(); return t === '' ? null : Number(t); }
+
+    function resetForm() {
+      editingId = null;
+      document.getElementById('formTitle').textContent = 'Yeni Video';
+      document.getElementById('youtubeUrl').value = '';
+      document.getElementById('awsUrl').value = '';
+      document.getElementById('baseStoryId').value = '';
+      document.getElementById('title').value = '';
+      document.getElementById('story').value = '';
+      document.getElementById('type').value = '';
+      document.getElementById('languageId').value = '';
+      document.getElementById('assistantId').value = '';
+      document.getElementById('basePromt').value = '';
+      document.getElementById('coverImageUrl').value = '';
+      document.getElementById('active').checked = true;
+      document.getElementById('btnDelete').style.display = 'none';
+    }
+
+    function openForm(editItem){
+      document.getElementById('formPanel').style.display = 'block';
+      if(editItem){
+        editingId = editItem.id;
+        document.getElementById('formTitle').textContent = 'Videoyu Düzenle';
+        document.getElementById('youtubeUrl').value = editItem.youtubeUrl || '';
+        document.getElementById('awsUrl').value = editItem.awsUrl || '';
+        document.getElementById('baseStoryId').value = editItem.baseStoryId || '';
+        document.getElementById('title').value = editItem.title || '';
+        document.getElementById('story').value = editItem.story || '';
+        document.getElementById('type').value = editItem.type || '';
+        document.getElementById('languageId').value = editItem.language?.id || '';
+        document.getElementById('assistantId').value = editItem.assistantId || '';
+        document.getElementById('basePromt').value = editItem.basePromt || '';
+        document.getElementById('coverImageUrl').value = editItem.coverImageUrl || '';
+        document.getElementById('active').checked = !!editItem.active;
+        document.getElementById('btnDelete').style.display = 'inline-flex';
+      } else {
+        resetForm();
+      }
+    }
+
+    function closeForm(){
+      document.getElementById('formPanel').style.display = 'none';
+      resetForm();
+    }
+
+    function renderRows(items){
+      const tbody = document.getElementById('gridBody');
+      if(!items || items.length === 0){
+        tbody.innerHTML = '<tr><td colspan="8">Kayıt bulunamadı</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '';
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="action-cell">
+            <button class="btn-icon edit" data-id="${item.id}"><span class="material-icons">edit</span></button>
+            <button class="btn-icon delete" data-id="${item.id}"><span class="material-icons">delete</span></button>
+          </td>
+          <td>${escapeHtml(item.title || '')}</td>
+          <td><a href="${item.youtubeUrl}" target="_blank">Bağlantı</a></td>
+          <td>${escapeHtml(item.type || '')}</td>
+          <td>${item.language ? (item.language.name || item.language.id) : ''}</td>
+          <td>${item.active ? 'Evet' : 'Hayır'}</td>
+          <td>${formatDate(item.createdAt)}</td>
+          <td>${formatDate(item.updatedAt)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // action bağla
+      tbody.querySelectorAll('.btn-icon.edit').forEach(btn => btn.addEventListener('click', async (e)=>{
+        const id = e.currentTarget.getAttribute('data-id');
+        const data = await apiGetOne(id);
+        openForm(data);
+      }));
+      tbody.querySelectorAll('.btn-icon.delete').forEach(btn => btn.addEventListener('click', async (e)=>{
+        const id = e.currentTarget.getAttribute('data-id');
+        if(confirm('Silmek istediğinize emin misiniz?')){
+          await apiDelete(id);
+          await loadList();
+          showStatus('success','Kayıt silindi');
+        }
+      }));
+    }
+
+    function formatDate(v){ if(!v) return ''; const d = new Date(v); return d.toLocaleString('tr-TR'); }
+    function escapeHtml(str){ return (str||'').replace(/[&<>"]+/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[s])); }
+
+    // API helpers
+    const API = () => `${BASE_URL}/youtube`;
+
+    async function apiList(){
+      const res = await fetch(API(), { headers: { 'Content-Type':'application/json' } });
+      if(!res.ok) throw new Error('Liste alınamadı');
+      return res.json();
+    }
+    async function apiSearch(){
+      const q = (document.getElementById('searchText').value||'').trim();
+      const lang = (document.getElementById('searchLanguage').value||'').trim();
+      const params = new URLSearchParams();
+      if(q) params.set('q', q);
+      if(lang) params.set('languageId', lang);
+      const url = `${API()}/list/search?${params.toString()}`;
+      const res = await fetch(url, { headers: { 'Content-Type':'application/json' } });
+      if(!res.ok) throw new Error('Arama başarısız');
+      return res.json();
+    }
+    async function apiCreate(dto){
+      const res = await fetch(API(), { method:'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(dto) });
+      if(!res.ok) throw new Error('Oluşturma başarısız');
+      return res.json();
+    }
+    async function apiUpdate(id, dto){
+      const res = await fetch(`${API()}/${id}`, { method:'PATCH', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(dto) });
+      if(!res.ok) throw new Error('Güncelleme başarısız');
+      return res.json();
+    }
+    async function apiDelete(id){
+      const res = await fetch(`${API()}/${id}`, { method:'DELETE' });
+      if(!res.ok) throw new Error('Silme başarısız');
+      return res.json();
+    }
+    async function apiGetOne(id){
+      const res = await fetch(`${API()}/${id}`);
+      if(!res.ok) throw new Error('Kayıt bulunamadı');
+      return res.json();
+    }
+
+    async function loadList(useSearch=false){
+      try {
+        showStatus('', '');
+        document.getElementById('gridBody').innerHTML = '<tr><td colspan="8">Yükleniyor...</td></tr>';
+        const data = useSearch ? await apiSearch() : await apiList();
+        renderRows(data);
+      } catch(err){
+        console.error(err);
+        showStatus('error', err.message);
+        document.getElementById('gridBody').innerHTML = `<tr><td colspan="8">Hata: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function onSave(){
+      try{
+        const dto = dtoFromForm();
+        if(!dto.youtubeUrl || !dto.title){
+          showStatus('error','YouTube URL ve Başlık zorunludur');
+          return;
+        }
+        if(editingId){
+          await apiUpdate(editingId, dto);
+          showStatus('success','Güncellendi');
+        } else {
+          await apiCreate(dto);
+          showStatus('success','Oluşturuldu');
+        }
+        closeForm();
+        await loadList();
+      } catch(err){
+        console.error(err);
+        showStatus('error', err.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Giriş kontrolü (auth.js bu sayfada da çalışır)
+      try { if(typeof checkAuth === 'function') checkAuth(); } catch(_) {}
+
+      document.getElementById('btnReload').addEventListener('click', ()=> loadList());
+      document.getElementById('btnSearch').addEventListener('click', ()=> loadList(true));
+      document.getElementById('btnNew').addEventListener('click', ()=> openForm());
+      document.getElementById('btnCancel').addEventListener('click', ()=> closeForm());
+      document.getElementById('btnSave').addEventListener('click', onSave);
+      document.getElementById('btnDelete').addEventListener('click', async ()=>{
+        if(!editingId) return; if(confirm('Silmek istediğinize emin misiniz?')){ await apiDelete(editingId); closeForm(); await loadList(); showStatus('success','Kayıt silindi'); }
+      });
+
+      loadList();
+    });
+  </script>
+</body>
+</html>

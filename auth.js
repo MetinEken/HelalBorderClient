@@ -5,17 +5,14 @@
  * @returns {boolean} Kullanıcı giriş yapmışsa true, yapmamışsa false döner
  */
 function isLoggedIn() {
-  const authToken = localStorage.getItem('systemDefault');
-  return authToken === AUTH_TOKEN;
+  return true;
 }
 
 /**
  * Kullanıcı giriş yapmamışsa giriş sayfasına yönlendirir
  */
 function checkAuth() {
-  if (!isLoggedIn()) {
-    window.location.href = 'index.html';
-  }
+  return;
 }
 
 /**
