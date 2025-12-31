@@ -54,6 +54,11 @@ type FormState = {
   assistantId: string
   basePromt: string
   coverImageUrl: string
+  baseInstruction: string
+  videoId: string
+  videoType: string
+  characterIdleVideoUrl: string
+  characterTalkingVideoUrl: string
   active: boolean
   characters: YoutubeCharacter[]
 }
@@ -86,6 +91,11 @@ function toFormState(item?: YoutubeItem): FormState {
     assistantId: item?.assistantId || '',
     basePromt: item?.basePromt || '',
     coverImageUrl: item?.coverImageUrl || '',
+    baseInstruction: item?.baseInstruction || '',
+    videoId: item?.videoId || '',
+    videoType: item?.videoType || '',
+    characterIdleVideoUrl: item?.characterIdleVideoUrl || '',
+    characterTalkingVideoUrl: item?.characterTalkingVideoUrl || '',
     active: item?.active ?? true,
     characters: Array.isArray(item?.characters) ? item!.characters! : [],
   }
@@ -104,6 +114,11 @@ function toDto(form: FormState): CreateYoutubeDto {
     assistantId: emptyToNull(form.assistantId),
     basePromt: emptyToNull(form.basePromt),
     coverImageUrl: emptyToNull(form.coverImageUrl),
+    baseInstruction: emptyToNull(form.baseInstruction),
+    videoId: emptyToNull(form.videoId),
+    videoType: emptyToNull(form.videoType),
+    characterIdleVideoUrl: emptyToNull(form.characterIdleVideoUrl),
+    characterTalkingVideoUrl: emptyToNull(form.characterTalkingVideoUrl),
     active: !!form.active,
   }
 }
@@ -407,6 +422,21 @@ export default function Youtube() {
             />
 
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <TextField
+                label="Video Id"
+                value={form.videoId}
+                onChange={(e) => setForm((s) => ({ ...s, videoId: e.target.value }))}
+                fullWidth
+              />
+              <TextField
+                label="Video Tipi"
+                value={form.videoType}
+                onChange={(e) => setForm((s) => ({ ...s, videoType: e.target.value }))}
+                fullWidth
+              />
+            </Stack>
+
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
               <FormControl fullWidth>
                 <InputLabel id="youtube-type-label">Tür</InputLabel>
                 <Select
@@ -455,11 +485,32 @@ export default function Youtube() {
               minRows={3}
             />
 
+            <TextField
+              label="Base Instruction"
+              value={form.baseInstruction}
+              onChange={(e) => setForm((s) => ({ ...s, baseInstruction: e.target.value }))}
+              fullWidth
+              multiline
+              minRows={3}
+            />
+
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
               <TextField
                 label="Kapak Resmi URL"
                 value={form.coverImageUrl}
                 onChange={(e) => setForm((s) => ({ ...s, coverImageUrl: e.target.value }))}
+                fullWidth
+              />
+              <TextField
+                label="Karakter Idle Video URL"
+                value={form.characterIdleVideoUrl}
+                onChange={(e) => setForm((s) => ({ ...s, characterIdleVideoUrl: e.target.value }))}
+                fullWidth
+              />
+              <TextField
+                label="Karakter Konuşma Video URL"
+                value={form.characterTalkingVideoUrl}
+                onChange={(e) => setForm((s) => ({ ...s, characterTalkingVideoUrl: e.target.value }))}
                 fullWidth
               />
               <FormControlLabel
