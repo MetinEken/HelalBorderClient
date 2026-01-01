@@ -20,6 +20,7 @@ import HataBildirimleri from './pages/HataBildirimleri'
 import Youtube from './pages/Youtube'
 import BaseInstructer from './pages/BaseInstructer'
 import AICharacters from './pages/AICharacters'
+import AwsVideoImages from './pages/AwsVideoImages'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
           { path: 'youtube', element: <Youtube /> },
           { path: 'base-instructer', element: <BaseInstructer /> },
           { path: 'ai-characters', element: <AICharacters /> },
+          { path: 'aws-video-images', element: <AwsVideoImages /> },
           { path: '*', element: <Navigate to="/" /> },
         ],
       },

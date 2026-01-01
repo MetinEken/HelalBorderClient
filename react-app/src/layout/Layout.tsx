@@ -25,6 +25,7 @@ const drawerMenus = [
   { label: 'YouTube Videolar', to: '/youtube' },
   { label: 'BaseInstructer', to: '/base-instructer' },
   { label: 'AI Karakterler', to: '/ai-characters' },
+  { label: 'AWS Video Images', to: '/aws-video-images' },
 ]
 
 export default function Layout(){
