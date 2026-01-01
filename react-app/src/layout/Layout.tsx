@@ -23,6 +23,7 @@ const drawerMenus = [
   { label: 'Token Kullanım', to: '/token-kullanim' },
   { label: 'Hata Bildirimleri', to: '/hata-bildirimleri' },
   { label: 'YouTube Videolar', to: '/youtube' },
+  { label: 'BaseInstructer', to: '/base-instructer' },
 ]
 
 export default function Layout(){
