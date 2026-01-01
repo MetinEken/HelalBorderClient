@@ -22,6 +22,8 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay'
+import { listByRelations, type YoutubeItem } from '../services/youtubeService'
 import {
   createAICharacter,
   deleteAICharacter,
@@ -78,6 +80,12 @@ export default function AICharacters() {
   const [error, setError] = useState<string | null>(null)
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
+  const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false)
+  const [youtubeLoading, setYoutubeLoading] = useState(false)
+  const [youtubeError, setYoutubeError] = useState<string | null>(null)
+  const [youtubeRows, setYoutubeRows] = useState<YoutubeItem[]>([])
+  const [youtubeForName, setYoutubeForName] = useState<string>('')
+
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(() => toFormState())
@@ -95,6 +103,22 @@ export default function AICharacters() {
       setRows([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function openYoutubeDialogForCharacter(ch: AICharacter) {
+    setYoutubeDialogOpen(true)
+    setYoutubeForName(ch.name || '')
+    setYoutubeLoading(true)
+    setYoutubeError(null)
+    setYoutubeRows([])
+    try {
+      const result = await listByRelations({ aiCharacterId: ch.id })
+      setYoutubeRows(Array.isArray(result) ? result : [])
+    } catch (err: any) {
+      setYoutubeError(err?.message || 'YouTube listesi alınamadı')
+    } finally {
+      setYoutubeLoading(false)
     }
   }
 
@@ -225,6 +249,9 @@ export default function AICharacters() {
                 <TableCell>{formatDate(r.createdAt)}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
+                    <IconButton size="small" color="primary" onClick={() => openYoutubeDialogForCharacter(r)}>
+                      <PlaylistPlayIcon fontSize="small" />
+                    </IconButton>
                     <IconButton size="small" onClick={() => openEditDialog(r.id)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -243,6 +270,61 @@ export default function AICharacters() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog open={youtubeDialogOpen} onClose={() => setYoutubeDialogOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>{youtubeForName ? `YouTube Videoları - ${youtubeForName}` : 'YouTube Videoları'}</DialogTitle>
+        <DialogContent dividers>
+          {youtubeLoading && (
+            <Box display="flex" alignItems="center" gap={1} sx={{ mb: 2 }}>
+              <CircularProgress size={20} />
+              Yükleniyor...
+            </Box>
+          )}
+          {youtubeError && <Alert severity="error" sx={{ mb: 2 }}>{youtubeError}</Alert>}
+          {!youtubeLoading && !youtubeError && (
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Başlık</TableCell>
+                    <TableCell>YouTube URL</TableCell>
+                    <TableCell>Cover Image</TableCell>
+                    <TableCell>Tür</TableCell>
+                    <TableCell>Oluşturma</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(youtubeRows || []).map((y) => (
+                    <TableRow key={y.id}>
+                      <TableCell>{y.title}</TableCell>
+                      <TableCell>
+                        {y.youtubeUrl ? (
+                          <a href={y.youtubeUrl} target="_blank" rel="noreferrer">Link</a>
+                        ) : ''}
+                      </TableCell>
+                      <TableCell>
+                        {y.coverImageUrl ? (
+                          <a href={y.coverImageUrl} target="_blank" rel="noreferrer">Resim</a>
+                        ) : ''}
+                      </TableCell>
+                      <TableCell>{y.type || ''}</TableCell>
+                      <TableCell>{formatDate(y.createdAt)}</TableCell>
+                    </TableRow>
+                  ))}
+                  {(!youtubeRows || youtubeRows.length === 0) && (
+                    <TableRow>
+                      <TableCell colSpan={5}>Kayıt bulunamadı</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setYoutubeDialogOpen(false)} variant="outlined">Kapat</Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{isEditing ? 'AI Karakter Düzenle' : 'Yeni AI Karakter'}</DialogTitle>

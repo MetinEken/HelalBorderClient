@@ -36,12 +36,21 @@ export interface YoutubeItem extends CreateYoutubeDto {
   createdAt?: string
   updatedAt?: string
   language?: any
+  aiCharacterId?: string | null
+  baseInstructionEntityId?: string | null
+  aiCharacter?: any
+  baseInstructionEntity?: any
 }
 
 const base = '/youtube'
 
 export async function list(): Promise<YoutubeItem[]> {
   const { data } = await axios.get(base)
+  return data
+}
+
+export async function listByRelations(params: { aiCharacterId?: string; baseInstructionEntityId?: string }): Promise<YoutubeItem[]> {
+  const { data } = await axios.get(`${base}/by-relations`, { params })
   return data
 }
 
