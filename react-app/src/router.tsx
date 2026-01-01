@@ -19,6 +19,7 @@ import TokenKullanim from './pages/TokenKullanim'
 import HataBildirimleri from './pages/HataBildirimleri'
 import Youtube from './pages/Youtube'
 import BaseInstructer from './pages/BaseInstructer'
+import AICharacters from './pages/AICharacters'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
           { path: 'hata-bildirimleri', element: <HataBildirimleri /> },
           { path: 'youtube', element: <Youtube /> },
           { path: 'base-instructer', element: <BaseInstructer /> },
+          { path: 'ai-characters', element: <AICharacters /> },
           { path: '*', element: <Navigate to="/" /> },
         ],
       },
