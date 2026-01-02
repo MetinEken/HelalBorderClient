@@ -256,7 +256,33 @@ export default function Youtube() {
     setEditingId(id)
     try {
       const item = await getOne(id)
-      setForm(toFormState(item))
+      // Önce temel form state'i doldur
+      let next = toFormState(item)
+
+      // Mevcut URL'lere göre cover / idle / talking seçimlerini bul
+      if (Array.isArray(awsVideos) && awsVideos.length > 0) {
+        const coverMatch = awsVideos.find(v => {
+          const url = v.coverUrl ?? v.coverImageUrl ?? null
+          return url && url === item.coverImageUrl
+        })
+        const idleMatch = awsVideos.find(v => {
+          const url = v.videoUrl ?? v.awsVideoUrl ?? null
+          return url && url === item.characterIdleVideoUrl
+        })
+        const talkingMatch = awsVideos.find(v => {
+          const url = v.videoUrl ?? v.awsVideoUrl ?? null
+          return url && url === item.characterTalkingVideoUrl
+        })
+
+        next = {
+          ...next,
+          coverImageId: coverMatch ? coverMatch.id : '',
+          characterIdleVideoId: idleMatch ? idleMatch.id : '',
+          characterTalkingVideoId: talkingMatch ? talkingMatch.id : '',
+        }
+      }
+
+      setForm(next)
     } catch (err: any) {
       setStatus({ type: 'error', message: err?.message || 'Kayıt bulunamadı' })
     }
@@ -578,6 +604,42 @@ export default function Youtube() {
                 label="Aktif"
               />
             </Stack>
+
+            {/* Seçili kapak / idle / konuşma video URL'lerini göster */}
+            {(() => {
+              const coverItem = awsVideos.find(v => v.id === form.coverImageId)
+              const idleItem = awsVideos.find(v => v.id === form.characterIdleVideoId)
+              const talkingItem = awsVideos.find(v => v.id === form.characterTalkingVideoId)
+
+              const coverUrl = coverItem ? (coverItem.coverUrl ?? coverItem.coverImageUrl ?? null) : null
+              const idleUrl = idleItem ? (idleItem.videoUrl ?? idleItem.awsVideoUrl ?? null) : null
+              const talkingUrl = talkingItem ? (talkingItem.videoUrl ?? talkingItem.awsVideoUrl ?? null) : null
+
+              if (!coverUrl && !idleUrl && !talkingUrl) return null
+
+              return (
+                <Stack spacing={0.5} sx={{ mt: 1 }}>
+                  {coverUrl && (
+                    <Typography variant="body2">
+                      Kapak URL:&nbsp;
+                      <a href={coverUrl} target="_blank" rel="noreferrer">{coverUrl}</a>
+                    </Typography>
+                  )}
+                  {idleUrl && (
+                    <Typography variant="body2">
+                      Idle Video URL:&nbsp;
+                      <a href={idleUrl} target="_blank" rel="noreferrer">{idleUrl}</a>
+                    </Typography>
+                  )}
+                  {talkingUrl && (
+                    <Typography variant="body2">
+                      Konuşma Video URL:&nbsp;
+                      <a href={talkingUrl} target="_blank" rel="noreferrer">{talkingUrl}</a>
+                    </Typography>
+                  )}
+                </Stack>
+              )
+            })()}
 
             <Stack spacing={1}>
               <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
