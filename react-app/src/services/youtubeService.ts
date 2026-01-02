@@ -28,6 +28,8 @@ export interface CreateYoutubeDto {
   coverImageUrl?: string | null
   characterIdleVideoUrl?: string | null
   characterTalkingVideoUrl?: string | null
+  aiCharacterId?: string | null
+  baseInstructionEntityId?: string | null
   active?: boolean
 }
 

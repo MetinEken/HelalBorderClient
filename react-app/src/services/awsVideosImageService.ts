@@ -7,6 +7,8 @@ export interface AwsVideosImageItem {
   coverImageUrl?: string | null
   awsVideoKey?: string | null
   coverImageKey?: string | null
+  videoUrl?: string | null
+  coverUrl?: string | null
   videoType: string
   languageId?: number | null
   language?: any

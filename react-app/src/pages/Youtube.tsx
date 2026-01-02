@@ -42,23 +42,23 @@ import {
   type YoutubeItem,
 } from '../services/youtubeService'
 import { listLanguages, type Language } from '../services/languageService'
+import { listAICharacters, type AICharacter } from '../services/aiCharacterService'
+import { list as listAwsVideos, type AwsVideosImageItem } from '../services/awsVideosImageService'
+import { listBaseInstructions, type BaseInstruction } from '../services/baseInstructionService'
 
 type FormState = {
   youtubeUrl: string
   awsUrl: string
-  baseStoryId: string
   title: string
   story: string
   type: string
   languageId: string
-  assistantId: string
-  basePromt: string
-  coverImageUrl: string
-  baseInstruction: string
+  coverImageId: string
   videoId: string
-  videoType: string
-  characterIdleVideoUrl: string
-  characterTalkingVideoUrl: string
+  characterIdleVideoId: string
+  characterTalkingVideoId: string
+  aiCharacterId: string
+  baseInstructionEntityId: string
   active: boolean
   characters: YoutubeCharacter[]
 }
@@ -83,42 +83,41 @@ function toFormState(item?: YoutubeItem): FormState {
   return {
     youtubeUrl: item?.youtubeUrl || '',
     awsUrl: item?.awsUrl || '',
-    baseStoryId: item?.baseStoryId || '',
     title: item?.title || '',
     story: item?.story || '',
     type: item?.type || '',
     languageId: item?.language ? String(item.language.id ?? '') : (item?.languageId != null ? String(item.languageId) : ''),
-    assistantId: item?.assistantId || '',
-    basePromt: item?.basePromt || '',
-    coverImageUrl: item?.coverImageUrl || '',
-    baseInstruction: item?.baseInstruction || '',
+    coverImageId: '',
     videoId: item?.videoId || '',
-    videoType: item?.videoType || '',
-    characterIdleVideoUrl: item?.characterIdleVideoUrl || '',
-    characterTalkingVideoUrl: item?.characterTalkingVideoUrl || '',
+    characterIdleVideoId: '',
+    characterTalkingVideoId: '',
+    aiCharacterId: item?.aiCharacterId || '',
+    baseInstructionEntityId: item?.baseInstructionEntityId || '',
     active: item?.active ?? true,
     characters: Array.isArray(item?.characters) ? item!.characters! : [],
   }
 }
 
-function toDto(form: FormState): CreateYoutubeDto {
+function toDto(form: FormState, awsVideos: AwsVideosImageItem[]): CreateYoutubeDto {
+  const coverItem = awsVideos.find(v => v.id === form.coverImageId)
+  const idleItem = awsVideos.find(v => v.id === form.characterIdleVideoId)
+  const talkingItem = awsVideos.find(v => v.id === form.characterTalkingVideoId)
+
   return {
     youtubeUrl: form.youtubeUrl.trim(),
     awsUrl: emptyToNull(form.awsUrl),
-    baseStoryId: emptyToNull(form.baseStoryId),
     title: form.title.trim(),
     story: emptyToNull(form.story),
     characters: form.characters.length > 0 ? form.characters : null,
     type: emptyToNull(form.type),
     languageId: numberOrNull(form.languageId),
-    assistantId: emptyToNull(form.assistantId),
-    basePromt: emptyToNull(form.basePromt),
-    coverImageUrl: emptyToNull(form.coverImageUrl),
-    baseInstruction: emptyToNull(form.baseInstruction),
+    coverImageUrl: coverItem ? (coverItem.coverUrl ?? coverItem.coverImageUrl ?? null) : null,
     videoId: emptyToNull(form.videoId),
-    videoType: emptyToNull(form.videoType),
-    characterIdleVideoUrl: emptyToNull(form.characterIdleVideoUrl),
-    characterTalkingVideoUrl: emptyToNull(form.characterTalkingVideoUrl),
+    videoType: emptyToNull(form.type),
+    characterIdleVideoUrl: idleItem ? (idleItem.videoUrl ?? idleItem.awsVideoUrl ?? null) : null,
+    characterTalkingVideoUrl: talkingItem ? (talkingItem.videoUrl ?? talkingItem.awsVideoUrl ?? null) : null,
+    aiCharacterId: emptyToNull(form.aiCharacterId),
+    baseInstructionEntityId: emptyToNull(form.baseInstructionEntityId),
     active: !!form.active,
   }
 }
@@ -143,6 +142,9 @@ export default function Youtube() {
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
   const [languages, setLanguages] = useState<Language[]>([])
+  const [aiCharacters, setAiCharacters] = useState<AICharacter[]>([])
+  const [awsVideos, setAwsVideos] = useState<AwsVideosImageItem[]>([])
+  const [baseInstructions, setBaseInstructions] = useState<BaseInstruction[]>([])
 
   const [searchText, setSearchText] = useState('')
   const [searchLanguageId, setSearchLanguageId] = useState('')
@@ -208,6 +210,20 @@ export default function Youtube() {
 
   useEffect(() => {
     let alive = true
+    listAICharacters()
+      .then((data) => { if (alive) setAiCharacters(Array.isArray(data) ? data : []) })
+      .catch(() => { if (alive) setAiCharacters([]) })
+    listAwsVideos()
+      .then((data) => { if (alive) setAwsVideos(Array.isArray(data) ? data : []) })
+      .catch(() => { if (alive) setAwsVideos([]) })
+    listBaseInstructions()
+      .then((data) => { if (alive) setBaseInstructions(Array.isArray(data) ? data : []) })
+      .catch(() => { if (alive) setBaseInstructions([]) })
+    return () => { alive = false }
+  }, [])
+
+  useEffect(() => {
+    let alive = true
     listLanguages()
       .then((data) => {
         if (!alive) return
@@ -256,7 +272,7 @@ export default function Youtube() {
   }
 
   async function onSave() {
-    const dto = toDto(form)
+    const dto = toDto(form, awsVideos)
     if (!dto.youtubeUrl || !dto.title) {
       setStatus({ type: 'error', message: 'YouTube URL ve Başlık zorunludur' })
       return
@@ -399,12 +415,6 @@ export default function Youtube() {
 
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
               <TextField
-                label="Base Story Id"
-                value={form.baseStoryId}
-                onChange={(e) => setForm((s) => ({ ...s, baseStoryId: e.target.value }))}
-                fullWidth
-              />
-              <TextField
                 label="Başlık"
                 value={form.title}
                 onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))}
@@ -426,12 +436,6 @@ export default function Youtube() {
                 label="Video Id"
                 value={form.videoId}
                 onChange={(e) => setForm((s) => ({ ...s, videoId: e.target.value }))}
-                fullWidth
-              />
-              <TextField
-                label="Video Tipi"
-                value={form.videoType}
-                onChange={(e) => setForm((s) => ({ ...s, videoType: e.target.value }))}
                 fullWidth
               />
             </Stack>
@@ -468,51 +472,88 @@ export default function Youtube() {
                     ))}
                 </Select>
               </FormControl>
-              <TextField
-                label="Asistan Id"
-                value={form.assistantId}
-                onChange={(e) => setForm((s) => ({ ...s, assistantId: e.target.value }))}
-                fullWidth
-              />
             </Stack>
 
-            <TextField
-              label="Base Prompt"
-              value={form.basePromt}
-              onChange={(e) => setForm((s) => ({ ...s, basePromt: e.target.value }))}
-              fullWidth
-              multiline
-              minRows={3}
-            />
-
-            <TextField
-              label="Base Instruction"
-              value={form.baseInstruction}
-              onChange={(e) => setForm((s) => ({ ...s, baseInstruction: e.target.value }))}
-              fullWidth
-              multiline
-              minRows={3}
-            />
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-ai-character-label">AI Character</InputLabel>
+                <Select
+                  labelId="youtube-ai-character-label"
+                  label="AI Character"
+                  value={form.aiCharacterId}
+                  onChange={(e) => setForm((s) => ({ ...s, aiCharacterId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {aiCharacters.map((c) => (
+                    <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-base-instruction-label">Base Instruction</InputLabel>
+                <Select
+                  labelId="youtube-base-instruction-label"
+                  label="Base Instruction"
+                  value={form.baseInstructionEntityId}
+                  onChange={(e) => setForm((s) => ({ ...s, baseInstructionEntityId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {baseInstructions.map((b) => (
+                    <MenuItem key={b.id} value={b.id}>{b.name || b.code}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
 
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
-              <TextField
-                label="Kapak Resmi URL"
-                value={form.coverImageUrl}
-                onChange={(e) => setForm((s) => ({ ...s, coverImageUrl: e.target.value }))}
-                fullWidth
-              />
-              <TextField
-                label="Karakter Idle Video URL"
-                value={form.characterIdleVideoUrl}
-                onChange={(e) => setForm((s) => ({ ...s, characterIdleVideoUrl: e.target.value }))}
-                fullWidth
-              />
-              <TextField
-                label="Karakter Konuşma Video URL"
-                value={form.characterTalkingVideoUrl}
-                onChange={(e) => setForm((s) => ({ ...s, characterTalkingVideoUrl: e.target.value }))}
-                fullWidth
-              />
+              <FormControl fullWidth>
+                <InputLabel id="youtube-cover-label">Kapak Resmi</InputLabel>
+                <Select
+                  labelId="youtube-cover-label"
+                  label="Kapak Resmi"
+                  value={form.coverImageId}
+                  onChange={(e) => setForm((s) => ({ ...s, coverImageId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {awsVideos
+                    .filter(v => v.coverImageKey || v.coverImageUrl)
+                    .map((v) => (
+                      <MenuItem key={v.id} value={v.id}>{v.name}</MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-idle-video-label">Karakter Idle Video</InputLabel>
+                <Select
+                  labelId="youtube-idle-video-label"
+                  label="Karakter Idle Video"
+                  value={form.characterIdleVideoId}
+                  onChange={(e) => setForm((s) => ({ ...s, characterIdleVideoId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {awsVideos
+                    .filter(v => v.awsVideoKey || v.awsVideoUrl)
+                    .map((v) => (
+                      <MenuItem key={v.id} value={v.id}>{v.name}</MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-talking-video-label">Karakter Konuşma Video</InputLabel>
+                <Select
+                  labelId="youtube-talking-video-label"
+                  label="Karakter Konuşma Video"
+                  value={form.characterTalkingVideoId}
+                  onChange={(e) => setForm((s) => ({ ...s, characterTalkingVideoId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {awsVideos
+                    .filter(v => v.awsVideoKey || v.awsVideoUrl)
+                    .map((v) => (
+                      <MenuItem key={v.id} value={v.id}>{v.name}</MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
               <FormControlLabel
                 control={
                   <Checkbox
