@@ -30,6 +30,7 @@ export interface CreateYoutubeDto {
   characterTalkingVideoUrl?: string | null
   aiCharacterId?: string | null
   baseInstructionEntityId?: string | null
+  isChatOpen?: boolean
   active?: boolean
 }
 

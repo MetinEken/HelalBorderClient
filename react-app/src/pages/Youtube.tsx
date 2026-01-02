@@ -60,6 +60,7 @@ type FormState = {
   aiCharacterId: string
   baseInstructionEntityId: string
   active: boolean
+  isChatOpen: boolean
   characters: YoutubeCharacter[]
 }
 
@@ -94,6 +95,7 @@ function toFormState(item?: YoutubeItem): FormState {
     aiCharacterId: item?.aiCharacterId || '',
     baseInstructionEntityId: item?.baseInstructionEntityId || '',
     active: item?.active ?? true,
+    isChatOpen: item?.isChatOpen ?? true,
     characters: Array.isArray(item?.characters) ? item!.characters! : [],
   }
 }
@@ -118,6 +120,7 @@ function toDto(form: FormState, awsVideos: AwsVideosImageItem[]): CreateYoutubeD
     characterTalkingVideoUrl: talkingItem ? (talkingItem.videoUrl ?? talkingItem.awsVideoUrl ?? null) : null,
     aiCharacterId: emptyToNull(form.aiCharacterId),
     baseInstructionEntityId: emptyToNull(form.baseInstructionEntityId),
+    isChatOpen: !!form.isChatOpen,
     active: !!form.active,
   }
 }
@@ -355,6 +358,7 @@ export default function Youtube() {
               <TableCell>Tür</TableCell>
               <TableCell>Dil</TableCell>
               <TableCell>Aktif</TableCell>
+              <TableCell>Chat Açık</TableCell>
               <TableCell>Oluşturma</TableCell>
               <TableCell>Güncelleme</TableCell>
             </TableRow>
@@ -381,6 +385,7 @@ export default function Youtube() {
                 <TableCell>{r.type || ''}</TableCell>
                 <TableCell>{r.language ? (r.language.name || r.language.id) : (r.languageId ?? '')}</TableCell>
                 <TableCell>{r.active ? 'Evet' : 'Hayır'}</TableCell>
+                <TableCell>{r.isChatOpen ?? true ? 'Evet' : 'Hayır'}</TableCell>
                 <TableCell>{formatDate(r.createdAt)}</TableCell>
                 <TableCell>{formatDate(r.updatedAt)}</TableCell>
               </TableRow>
@@ -554,6 +559,15 @@ export default function Youtube() {
                     ))}
                 </Select>
               </FormControl>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={form.isChatOpen}
+                    onChange={(e) => setForm((s) => ({ ...s, isChatOpen: e.target.checked }))}
+                  />
+                }
+                label="Chat Açık"
+              />
               <FormControlLabel
                 control={
                   <Checkbox
