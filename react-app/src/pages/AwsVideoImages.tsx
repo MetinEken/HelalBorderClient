@@ -326,14 +326,20 @@ export default function AwsVideoImages() {
       // S3'e PUT
       await fetch(draft.video.putUrl, {
         method: 'PUT',
-        headers: { 'Content-Type': videoFile.type },
+        headers: {
+          'Content-Type': videoFile.type,
+          'Cache-Control': 'public, max-age=2592000, immutable',
+        },
         body: videoFile,
       })
 
       if (coverFile && draft.cover) {
         await fetch(draft.cover.putUrl, {
           method: 'PUT',
-          headers: { 'Content-Type': coverFile.type },
+          headers: {
+            'Content-Type': coverFile.type,
+            'Cache-Control': 'public, max-age=604800, immutable',
+          },
           body: coverFile,
         })
       }
