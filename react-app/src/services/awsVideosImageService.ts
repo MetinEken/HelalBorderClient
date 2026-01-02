@@ -71,8 +71,8 @@ export interface DraftRequest {
   videoType: string
   languageId?: number | null
   active?: boolean
-  videoExt: string
-  videoContentType: string
+  videoExt?: string
+  videoContentType?: string
   coverExt?: string
   coverContentType?: string
 }
@@ -85,7 +85,7 @@ export interface PresignedInfo {
 
 export interface DraftResponse {
   id: string
-  video: PresignedInfo
+  video?: PresignedInfo
   cover?: PresignedInfo
 }
 
@@ -94,7 +94,7 @@ export async function createDraft(body: DraftRequest): Promise<DraftResponse> {
   return data
 }
 
-export async function finalizeUpload(id: string, payload: { videoKey: string; coverKey?: string | null }): Promise<AwsVideosImageItem> {
+export async function finalizeUpload(id: string, payload: { videoKey?: string | null; coverKey?: string | null }): Promise<AwsVideosImageItem> {
   const { data } = await axios.patch(`${base}/${id}/finalize`, payload)
   return data
 }

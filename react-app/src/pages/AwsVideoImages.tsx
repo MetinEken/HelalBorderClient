@@ -44,6 +44,82 @@ import {
 } from '../services/awsVideosImageService'
 import { listLanguages, type Language } from '../services/languageService'
 
+async function resizeImageForCover(
+  file: File,
+  targetWidth: number,
+  targetHeight: number,
+): Promise<{ blob: Blob; mimeType: string; ext: string }> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = (e) => reject(e)
+    reader.readAsDataURL(file)
+  })
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = (e) => reject(e)
+    image.src = dataUrl
+  })
+
+  const srcW = img.width
+  const srcH = img.height
+  if (!srcW || !srcH) {
+    throw new Error('Geçersiz resim boyutu')
+  }
+
+  const srcRatio = srcW / srcH
+  const targetRatio = targetWidth / targetHeight
+
+  let drawW: number
+  let drawH: number
+  let sx: number
+  let sy: number
+
+  if (srcRatio > targetRatio) {
+    drawH = srcH
+    drawW = targetRatio * drawH
+    sx = (srcW - drawW) / 2
+    sy = 0
+  } else {
+    drawW = srcW
+    drawH = drawW / targetRatio
+    sx = 0
+    sy = (srcH - drawH) / 2
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = targetWidth
+  canvas.height = targetHeight
+  const ctx = canvas.getContext('2d')
+  if (!ctx) {
+    throw new Error('Canvas desteklenmiyor')
+  }
+
+  ctx.drawImage(img, sx, sy, drawW, drawH, 0, 0, targetWidth, targetHeight)
+
+  let supportsWebp = false
+  try {
+    supportsWebp = canvas.toDataURL('image/webp').startsWith('data:image/webp')
+  } catch {
+    supportsWebp = false
+  }
+
+  const mimeType = supportsWebp ? 'image/webp' : 'image/jpeg'
+  const ext = supportsWebp ? 'webp' : 'jpeg'
+  const quality = supportsWebp ? 0.75 : 0.8
+
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((b) => {
+      if (!b) return reject(new Error('Görsel sıkıştırılamadı'))
+      resolve(b)
+    }, mimeType, quality)
+  })
+
+  return { blob, mimeType, ext }
+}
+
 function formatDate(v?: string) {
   if (!v) return ''
   const d = new Date(v)
@@ -299,8 +375,8 @@ export default function AwsVideoImages() {
       setStatus({ type: 'error', message: 'Name ve Video Tipi zorunludur' })
       return
     }
-    if (!videoFile) {
-      setStatus({ type: 'error', message: 'Video dosyası seçilmelidir' })
+    if (!videoFile && !coverFile) {
+      setStatus({ type: 'error', message: 'En az bir dosya (video veya kapak) seçilmelidir' })
       return
     }
 
@@ -309,8 +385,29 @@ export default function AwsVideoImages() {
     try {
       const langId = form.languageId.trim() ? Number(form.languageId) : null
 
-      const videoExt = (videoFile.name.split('.').pop() || '').toLowerCase()
-      const coverExt = coverFile ? (coverFile.name.split('.').pop() || '').toLowerCase() : undefined
+      const videoExt = videoFile ? (videoFile.name.split('.').pop() || '').toLowerCase() : undefined
+
+      let coverToUpload: Blob | null = null
+      let coverContentType: string | undefined
+      let coverExt: string | undefined
+
+      if (coverFile) {
+        if (form.videoType === 'youtube') {
+          const { blob, mimeType, ext } = await resizeImageForCover(coverFile, 960, 540)
+          coverToUpload = blob
+          coverContentType = mimeType
+          coverExt = ext
+        } else if (form.videoType === 'short') {
+          const { blob, mimeType, ext } = await resizeImageForCover(coverFile, 540, 960)
+          coverToUpload = blob
+          coverContentType = mimeType
+          coverExt = ext
+        } else {
+          coverToUpload = coverFile
+          coverContentType = coverFile.type
+          coverExt = (coverFile.name.split('.').pop() || '').toLowerCase()
+        }
+      }
 
       const draft = await createDraft({
         name: form.name.trim(),
@@ -318,34 +415,37 @@ export default function AwsVideoImages() {
         languageId: langId ?? undefined,
         active: form.active,
         videoExt,
-        videoContentType: videoFile.type,
+        videoContentType: videoFile?.type,
         coverExt,
-        coverContentType: coverFile?.type,
+        coverContentType,
       })
 
-      // S3'e PUT
-      await fetch(draft.video.putUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': videoFile.type,
-          'Cache-Control': 'public, max-age=2592000, immutable',
-        },
-        body: videoFile,
-      })
+      // S3'e PUT (video)
+      if (videoFile && draft.video) {
+        await fetch(draft.video.putUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': videoFile.type,
+            'Cache-Control': 'public, max-age=2592000, immutable',
+          },
+          body: videoFile,
+        })
+      }
 
-      if (coverFile && draft.cover) {
+      // S3'e PUT (kapak)
+      if (coverToUpload && draft.cover) {
         await fetch(draft.cover.putUrl, {
           method: 'PUT',
           headers: {
-            'Content-Type': coverFile.type,
+            'Content-Type': coverContentType || 'image/jpeg',
             'Cache-Control': 'public, max-age=604800, immutable',
           },
-          body: coverFile,
+          body: coverToUpload,
         })
       }
 
       await finalizeUpload(draft.id, {
-        videoKey: draft.video.key,
+        videoKey: draft.video?.key ?? null,
         coverKey: draft.cover?.key ?? null,
       })
 
