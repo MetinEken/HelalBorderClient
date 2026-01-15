@@ -14,17 +14,11 @@ export interface YoutubeCharacter {
 export interface CreateYoutubeDto {
   youtubeUrl: string
   awsUrl?: string | null
-  baseStoryId?: string | null
   title: string
   story?: string | null
-  baseInstruction?: string | null
-  characters?: YoutubeCharacter[] | null
-  type?: string | null
   videoId?: string | null
   videoType?: string | null
   languageId?: number | null
-  assistantId?: string | null
-  basePromt?: string | null
   coverImageUrl?: string | null
   characterIdleVideoUrl?: string | null
   characterTalkingVideoUrl?: string | null

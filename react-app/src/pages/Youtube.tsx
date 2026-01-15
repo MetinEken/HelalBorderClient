@@ -63,7 +63,6 @@ type FormState = {
   baseInstructionEntityId: string
   active: boolean
   isChatOpen: boolean
-  characters: YoutubeCharacter[]
   chatMode: 'single' | 'multi'
 }
 
@@ -106,7 +105,7 @@ function toFormState(item?: YoutubeItem): FormState {
     awsUrl: item?.awsUrl || '',
     title: item?.title || '',
     story: item?.story || '',
-    type: item?.type || '',
+    type: (item?.videoType as string) || '',
     languageId: item?.language ? String(item.language.id ?? '') : (item?.languageId != null ? String(item.languageId) : ''),
     coverImageId: '',
     videoId: item?.videoId || '',
@@ -118,7 +117,6 @@ function toFormState(item?: YoutubeItem): FormState {
     baseInstructionEntityId: item?.baseInstructionEntityId || '',
     active: item?.active ?? true,
     isChatOpen: item?.isChatOpen ?? true,
-    characters: Array.isArray(item?.characters) ? item!.characters! : [],
     chatMode: (item?.chatMode as 'single' | 'multi') || 'single',
   }
 }
@@ -148,8 +146,6 @@ function toDto(form: FormState, awsVideos: AwsVideosImageItem[]): CreateYoutubeD
     awsUrl: emptyToNull(form.awsUrl),
     title: form.title.trim(),
     story: emptyToNull(form.story),
-    characters: form.characters.length > 0 ? form.characters : null,
-    type: emptyToNull(form.type),
     languageId: numberOrNull(form.languageId),
     coverImageUrl: coverItem ? (coverItem.coverUrl ?? coverItem.coverImageUrl ?? null) : null,
     videoId: emptyToNull(form.videoId),
@@ -196,21 +192,6 @@ export default function Youtube() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(() => toFormState())
   const isEditing = useMemo(() => !!editingId, [editingId])
-
-  function addCharacter() {
-    setForm((s) => ({ ...s, characters: [...s.characters, createEmptyCharacter()] }))
-  }
-
-  function removeCharacter(index: number) {
-    setForm((s) => ({ ...s, characters: s.characters.filter((_, i) => i !== index) }))
-  }
-
-  function updateCharacter(index: number, patch: Partial<YoutubeCharacter>) {
-    setForm((s) => ({
-      ...s,
-      characters: s.characters.map((c, i) => (i === index ? { ...c, ...patch } : c)),
-    }))
-  }
 
   async function loadList(useSearch = false) {
     setLoading(true)
@@ -347,7 +328,7 @@ export default function Youtube() {
       return
     }
 
-    if (!dto.type || (dto.type !== 'youtube' && dto.type !== 'short')) {
+    if (!dto.videoType || (dto.videoType !== 'youtube' && dto.videoType !== 'short')) {
       setStatus({ type: 'error', message: 'Tür alanı zorunludur (youtube veya short)' })
       return
     }
@@ -462,7 +443,7 @@ export default function Youtube() {
                     <a href={r.youtubeUrl} target="_blank" rel="noreferrer">Bağlantı</a>
                   ) : ''}
                 </TableCell>
-                <TableCell>{r.type || ''}</TableCell>
+                <TableCell>{r.videoType || ''}</TableCell>
                 <TableCell>{(r.chatMode === 'multi') ? 'Çoklu' : 'Tekli'}</TableCell>
                 <TableCell>{r.language ? (r.language.name || r.language.id) : (r.languageId ?? '')}</TableCell>
                 <TableCell>{r.active ? 'Evet' : 'Hayır'}</TableCell>
@@ -744,88 +725,6 @@ export default function Youtube() {
               )
             })()}
 
-            <Stack spacing={1}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                <Typography variant="subtitle1">Karakterler</Typography>
-                <Button size="small" variant="outlined" onClick={addCharacter}>Karakter Ekle</Button>
-              </Stack>
-
-              {(form.characters || []).map((ch, idx) => (
-                <Paper key={idx} variant="outlined" sx={{ p: 1.5 }}>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
-                    <Typography variant="subtitle2">Karakter #{idx + 1}</Typography>
-                    <Button size="small" color="error" variant="text" onClick={() => removeCharacter(idx)}>Kaldır</Button>
-                  </Stack>
-                  <Stack spacing={1}>
-                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                      <TextField
-                        label="Ad"
-                        value={ch.name}
-                        onChange={(e) => updateCharacter(idx, { name: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                      <TextField
-                        label="Rol"
-                        value={ch.role}
-                        onChange={(e) => updateCharacter(idx, { role: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                      <TextField
-                        label="Cinsiyet"
-                        value={ch.gender}
-                        onChange={(e) => updateCharacter(idx, { gender: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                    </Stack>
-
-                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                      <TextField
-                        label="Voice Id"
-                        value={ch.voiceId}
-                        onChange={(e) => updateCharacter(idx, { voiceId: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                      <TextField
-                        label="Voice Name"
-                        value={ch.voiceName}
-                        onChange={(e) => updateCharacter(idx, { voiceName: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                    </Stack>
-
-                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                      <TextField
-                        label="Language Code"
-                        value={ch.languageCode}
-                        onChange={(e) => updateCharacter(idx, { languageCode: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                      <TextField
-                        label="Speaking Style"
-                        value={ch.speakingStyle}
-                        onChange={(e) => updateCharacter(idx, { speakingStyle: e.target.value })}
-                        fullWidth
-                        size="small"
-                      />
-                    </Stack>
-
-                    <TextField
-                      label="Character Video URL"
-                      value={ch.characterVideoUrl || ''}
-                      onChange={(e) => updateCharacter(idx, { characterVideoUrl: e.target.value })}
-                      fullWidth
-                      size="small"
-                    />
-                  </Stack>
-                </Paper>
-              ))}
-            </Stack>
 
             <Divider />
           </Stack>
