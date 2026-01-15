@@ -32,6 +32,8 @@ export interface CreateYoutubeDto {
   baseInstructionEntityId?: string | null
   isChatOpen?: boolean
   active?: boolean
+  chatMode?: 'single' | 'multi'
+  youtubeCharacters?: Array<{ aiCharacterId: string; isPrimary?: boolean; orderIndex?: number }>
 }
 
 export interface YoutubeItem extends CreateYoutubeDto {

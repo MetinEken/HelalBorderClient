@@ -58,10 +58,13 @@ type FormState = {
   characterIdleVideoId: string
   characterTalkingVideoId: string
   aiCharacterId: string
+  secondAiCharacterId: string
+  thirdAiCharacterId: string
   baseInstructionEntityId: string
   active: boolean
   isChatOpen: boolean
   characters: YoutubeCharacter[]
+  chatMode: 'single' | 'multi'
 }
 
 function emptyToNull(v: string): string | null {
@@ -81,6 +84,23 @@ function formatDate(v?: string) {
 }
 
 function toFormState(item?: YoutubeItem): FormState {
+  // youtubeCharacters join tablosundan gelen karakterleri sırala
+  const yc = Array.isArray(item?.youtubeCharacters) ? item!.youtubeCharacters! : []
+  const sortedYc = [...yc].sort((a: any, b: any) => {
+    const ao = typeof a.orderIndex === 'number' ? a.orderIndex : 0
+    const bo = typeof b.orderIndex === 'number' ? b.orderIndex : 0
+    return ao - bo
+  })
+
+  // Ana karakter: öncelik isPrimary, yoksa ilk kayıt
+  const primaryFromYc = (sortedYc.find((c: any) => c.isPrimary) || sortedYc[0]) as any | undefined
+  const primaryId = (item?.aiCharacterId || primaryFromYc?.aiCharacterId || '') as string
+
+  // Kalan karakterler: primary hariç ilk iki
+  const remaining = sortedYc.filter((c: any) => c.aiCharacterId !== primaryId)
+  const secondId = (remaining[0]?.aiCharacterId || '') as string
+  const thirdId = (remaining[1]?.aiCharacterId || '') as string
+
   return {
     youtubeUrl: item?.youtubeUrl || '',
     awsUrl: item?.awsUrl || '',
@@ -92,11 +112,14 @@ function toFormState(item?: YoutubeItem): FormState {
     videoId: item?.videoId || '',
     characterIdleVideoId: '',
     characterTalkingVideoId: '',
-    aiCharacterId: item?.aiCharacterId || '',
+    aiCharacterId: primaryId,
+    secondAiCharacterId: secondId,
+    thirdAiCharacterId: thirdId,
     baseInstructionEntityId: item?.baseInstructionEntityId || '',
     active: item?.active ?? true,
     isChatOpen: item?.isChatOpen ?? true,
     characters: Array.isArray(item?.characters) ? item!.characters! : [],
+    chatMode: (item?.chatMode as 'single' | 'multi') || 'single',
   }
 }
 
@@ -104,6 +127,21 @@ function toDto(form: FormState, awsVideos: AwsVideosImageItem[]): CreateYoutubeD
   const coverItem = awsVideos.find(v => v.id === form.coverImageId)
   const idleItem = awsVideos.find(v => v.id === form.characterIdleVideoId)
   const talkingItem = awsVideos.find(v => v.id === form.characterTalkingVideoId)
+
+  // youtubeCharacters: max 3 karakter (ana + 2 yan), primary ilk sırada
+  const youtubeCharacters: NonNullable<CreateYoutubeDto['youtubeCharacters']> = []
+  const primaryId = emptyToNull(form.aiCharacterId)
+  if (primaryId) {
+    youtubeCharacters.push({ aiCharacterId: primaryId, isPrimary: true, orderIndex: 0 })
+  }
+  const secondId = emptyToNull(form.secondAiCharacterId)
+  if (secondId && secondId !== primaryId) {
+    youtubeCharacters.push({ aiCharacterId: secondId, isPrimary: false, orderIndex: youtubeCharacters.length })
+  }
+  const thirdId = emptyToNull(form.thirdAiCharacterId)
+  if (thirdId && thirdId !== primaryId && thirdId !== secondId) {
+    youtubeCharacters.push({ aiCharacterId: thirdId, isPrimary: false, orderIndex: youtubeCharacters.length })
+  }
 
   return {
     youtubeUrl: form.youtubeUrl.trim(),
@@ -118,10 +156,12 @@ function toDto(form: FormState, awsVideos: AwsVideosImageItem[]): CreateYoutubeD
     videoType: emptyToNull(form.type),
     characterIdleVideoUrl: idleItem ? (idleItem.videoUrl ?? idleItem.awsVideoUrl ?? null) : null,
     characterTalkingVideoUrl: talkingItem ? (talkingItem.videoUrl ?? talkingItem.awsVideoUrl ?? null) : null,
-    aiCharacterId: emptyToNull(form.aiCharacterId),
+    aiCharacterId: primaryId,
     baseInstructionEntityId: emptyToNull(form.baseInstructionEntityId),
     isChatOpen: !!form.isChatOpen,
     active: !!form.active,
+    chatMode: form.chatMode,
+    youtubeCharacters: youtubeCharacters.length > 0 ? youtubeCharacters : undefined,
   }
 }
 
@@ -312,6 +352,19 @@ export default function Youtube() {
       return
     }
 
+    // Kurallar:
+    // 1) isChatOpen true ise mutlaka ana karakter seçilmeli
+    if (form.isChatOpen && !form.aiCharacterId.trim()) {
+      setStatus({ type: 'error', message: 'Chat açıksa ana AI karakter seçilmelidir' })
+      return
+    }
+
+    // 2) chatMode === 'multi' ise en az 2. karakter seçilmeli
+    if (form.chatMode === 'multi' && !form.secondAiCharacterId.trim()) {
+      setStatus({ type: 'error', message: 'Çoklu sohbet modunda en az iki AI karakter seçilmelidir (ana + 2. karakter)' })
+      return
+    }
+
     try {
       if (editingId) {
         await update(editingId, dto)
@@ -382,6 +435,7 @@ export default function Youtube() {
               <TableCell>Başlık</TableCell>
               <TableCell>YouTube</TableCell>
               <TableCell>Tür</TableCell>
+              <TableCell>Sohbet Modu</TableCell>
               <TableCell>Dil</TableCell>
               <TableCell>Aktif</TableCell>
               <TableCell>Chat Açık</TableCell>
@@ -409,6 +463,7 @@ export default function Youtube() {
                   ) : ''}
                 </TableCell>
                 <TableCell>{r.type || ''}</TableCell>
+                <TableCell>{(r.chatMode === 'multi') ? 'Çoklu' : 'Tekli'}</TableCell>
                 <TableCell>{r.language ? (r.language.name || r.language.id) : (r.languageId ?? '')}</TableCell>
                 <TableCell>{r.active ? 'Evet' : 'Hayır'}</TableCell>
                 <TableCell>{r.isChatOpen ?? true ? 'Evet' : 'Hayır'}</TableCell>
@@ -507,10 +562,10 @@ export default function Youtube() {
 
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
               <FormControl fullWidth>
-                <InputLabel id="youtube-ai-character-label">AI Character</InputLabel>
+                <InputLabel id="youtube-ai-character-label">Ana AI Character</InputLabel>
                 <Select
                   labelId="youtube-ai-character-label"
-                  label="AI Character"
+                  label="Ana AI Character"
                   value={form.aiCharacterId}
                   onChange={(e) => setForm((s) => ({ ...s, aiCharacterId: String(e.target.value || '') }))}
                 >
@@ -520,6 +575,37 @@ export default function Youtube() {
                   ))}
                 </Select>
               </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-second-ai-character-label">2. Karakter (opsiyonel)</InputLabel>
+                <Select
+                  labelId="youtube-second-ai-character-label"
+                  label="2. Karakter (opsiyonel)"
+                  value={form.secondAiCharacterId}
+                  onChange={(e) => setForm((s) => ({ ...s, secondAiCharacterId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {aiCharacters.map((c) => (
+                    <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-third-ai-character-label">3. Karakter (opsiyonel)</InputLabel>
+                <Select
+                  labelId="youtube-third-ai-character-label"
+                  label="3. Karakter (opsiyonel)"
+                  value={form.thirdAiCharacterId}
+                  onChange={(e) => setForm((s) => ({ ...s, thirdAiCharacterId: String(e.target.value || '') }))}
+                >
+                  <MenuItem value=""><em>Seçiniz</em></MenuItem>
+                  {aiCharacters.map((c) => (
+                    <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
               <FormControl fullWidth>
                 <InputLabel id="youtube-base-instruction-label">Base Instruction</InputLabel>
                 <Select
@@ -532,6 +618,23 @@ export default function Youtube() {
                   {baseInstructions.map((b) => (
                     <MenuItem key={b.id} value={b.id}>{b.name || b.code}</MenuItem>
                   ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="youtube-chat-mode-label">Sohbet Modu</InputLabel>
+                <Select
+                  labelId="youtube-chat-mode-label"
+                  label="Sohbet Modu"
+                  value={form.chatMode}
+                  onChange={(e) =>
+                    setForm((s) => ({
+                      ...s,
+                      chatMode: e.target.value === 'multi' ? 'multi' : 'single',
+                    }))
+                  }
+                >
+                  <MenuItem value="single">Tekli Sohbet</MenuItem>
+                  <MenuItem value="multi">Çoklu Sohbet</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
