@@ -27,6 +27,7 @@ const drawerMenus = [
   { label: 'AI Karakterler', to: '/ai-characters' },
   { label: 'AWS Video Images', to: '/aws-video-images' },
   { label: 'Abonelikler', to: '/abonelikler' },
+  { label: 'Voice AI Config', to: '/voice-ai-config' },
 ]
 
 export default function Layout(){

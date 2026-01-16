@@ -8,8 +8,21 @@ export interface AICharacter {
   voiceId?: string | null
   voiceIdName?: string | null
   biografi?: string | null
+  elevenlabsVoiceId?: string | null
+  openaiVoiceId?: string | null
+  deepaiVoiceId?: string | null
   createdAt?: string
   updatedAt?: string
+}
+
+export interface ExternalVoice {
+  id: string
+  externalVoiceId: string
+  provider: string
+  name: string
+  gender?: string
+  languageCode?: string
+  description?: string
 }
 
 export interface CreateAICharacterDto {
@@ -19,6 +32,9 @@ export interface CreateAICharacterDto {
   voiceId?: string
   voiceIdName?: string
   biografi?: string
+  elevenlabsVoiceId?: string
+  openaiVoiceId?: string
+  deepaiVoiceId?: string
 }
 
 export interface UpdateAICharacterDto {
@@ -28,6 +44,9 @@ export interface UpdateAICharacterDto {
   voiceId?: string
   voiceIdName?: string
   biografi?: string
+  elevenlabsVoiceId?: string
+  openaiVoiceId?: string
+  deepaiVoiceId?: string
 }
 
 const base = '/ai-characters'
@@ -50,6 +69,11 @@ export async function createAICharacter(dto: CreateAICharacterDto): Promise<AICh
 export async function updateAICharacter(id: string, dto: UpdateAICharacterDto): Promise<AICharacter> {
   const { data } = await axios.patch(`${base}/${id}`, dto)
   return data
+}
+
+export async function listVoices(): Promise<ExternalVoice[]> {
+  const { data } = await axios.get(`${base}/voices`)
+  return Array.isArray(data) ? data : []
 }
 
 export async function deleteAICharacter(id: string): Promise<any> {

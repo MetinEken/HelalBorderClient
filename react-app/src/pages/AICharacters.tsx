@@ -8,6 +8,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import MenuItem from '@mui/material/MenuItem'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import TextField from '@mui/material/TextField'
@@ -30,9 +31,11 @@ import {
   getAICharacter,
   listAICharacters,
   updateAICharacter,
+  listVoices,
   type AICharacter,
   type CreateAICharacterDto,
   type UpdateAICharacterDto,
+  type ExternalVoice,
 } from '../services/aiCharacterService'
 
 function formatDate(v?: string) {
@@ -49,6 +52,9 @@ function toFormState(item?: AICharacter) {
     voiceId: item?.voiceId ?? '',
     voiceIdName: item?.voiceIdName ?? '',
     biografi: item?.biografi ?? '',
+    elevenlabsVoiceId: item?.elevenlabsVoiceId ?? '',
+    openaiVoiceId: item?.openaiVoiceId ?? '',
+    deepaiVoiceId: item?.deepaiVoiceId ?? '',
   }
 }
 
@@ -60,6 +66,9 @@ function toCreateDto(form: ReturnType<typeof toFormState>): CreateAICharacterDto
     voiceId: form.voiceId.trim() || undefined,
     voiceIdName: form.voiceIdName.trim() || undefined,
     biografi: form.biografi.trim() || undefined,
+    elevenlabsVoiceId: form.elevenlabsVoiceId.trim() || undefined,
+    openaiVoiceId: form.openaiVoiceId.trim() || undefined,
+    deepaiVoiceId: form.deepaiVoiceId.trim() || undefined,
   }
 }
 
@@ -71,6 +80,9 @@ function toUpdateDto(form: ReturnType<typeof toFormState>): UpdateAICharacterDto
   if (form.voiceId.trim()) dto.voiceId = form.voiceId.trim()
   if (form.voiceIdName.trim()) dto.voiceIdName = form.voiceIdName.trim()
   if (form.biografi.trim()) dto.biografi = form.biografi.trim()
+   if (form.elevenlabsVoiceId.trim()) dto.elevenlabsVoiceId = form.elevenlabsVoiceId.trim()
+   if (form.openaiVoiceId.trim()) dto.openaiVoiceId = form.openaiVoiceId.trim()
+   if (form.deepaiVoiceId.trim()) dto.deepaiVoiceId = form.deepaiVoiceId.trim()
   return dto
 }
 
@@ -85,6 +97,10 @@ export default function AICharacters() {
   const [youtubeError, setYoutubeError] = useState<string | null>(null)
   const [youtubeRows, setYoutubeRows] = useState<YoutubeItem[]>([])
   const [youtubeForName, setYoutubeForName] = useState<string>('')
+
+  const [voices, setVoices] = useState<ExternalVoice[]>([])
+  const [voicesLoading, setVoicesLoading] = useState(false)
+  const [voicesError, setVoicesError] = useState<string | null>(null)
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -122,9 +138,39 @@ export default function AICharacters() {
     }
   }
 
+  async function loadVoices() {
+    setVoicesLoading(true)
+    setVoicesError(null)
+    try {
+      const data = await listVoices()
+      setVoices(Array.isArray(data) ? data : [])
+    } catch (err: any) {
+      setVoicesError(err?.message || 'Voice listesi alınamadı')
+      setVoices([])
+    } finally {
+      setVoicesLoading(false)
+    }
+  }
+
   useEffect(() => {
     loadList()
+    loadVoices()
   }, [])
+
+  const elevenVoices = useMemo(
+    () => voices.filter((v) => v.provider === 'elevenlabs'),
+    [voices],
+  )
+
+  const openaiVoices = useMemo(
+    () => voices.filter((v) => v.provider === 'openai'),
+    [voices],
+  )
+
+  const deepaiVoices = useMemo(
+    () => voices.filter((v) => v.provider === 'deepai' || v.provider === 'deepgram'),
+    [voices],
+  )
 
   function openCreateDialog() {
     setEditingId(null)
@@ -224,6 +270,7 @@ export default function AICharacters() {
       )}
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {status && <Alert severity={status.type} sx={{ mb: 2 }}>{status.message}</Alert>}
+      {voicesError && <Alert severity="error" sx={{ mb: 2 }}>{voicesError}</Alert>}
 
       <TableContainer component={Paper}>
         <Table size="small">
@@ -232,8 +279,11 @@ export default function AICharacters() {
               <TableCell>İsim</TableCell>
               <TableCell>Karakter (personality)</TableCell>
               <TableCell>Ton (tone)</TableCell>
-              <TableCell>Voice Id</TableCell>
+              <TableCell>Genel Voice Id</TableCell>
               <TableCell>Voice Adı</TableCell>
+              <TableCell>ElevenLabs Voice Id</TableCell>
+              <TableCell>OpenAI Voice Id</TableCell>
+              <TableCell>DeepAI Voice Id</TableCell>
               <TableCell>Oluşturma</TableCell>
               <TableCell>Aksiyonlar</TableCell>
             </TableRow>
@@ -246,6 +296,9 @@ export default function AICharacters() {
                 <TableCell>{r.tone}</TableCell>
                 <TableCell>{r.voiceId ?? ''}</TableCell>
                 <TableCell>{r.voiceIdName ?? ''}</TableCell>
+                <TableCell>{r.elevenlabsVoiceId ?? ''}</TableCell>
+                <TableCell>{r.openaiVoiceId ?? ''}</TableCell>
+                <TableCell>{r.deepaiVoiceId ?? ''}</TableCell>
                 <TableCell>{formatDate(r.createdAt)}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
@@ -307,7 +360,7 @@ export default function AICharacters() {
                           <a href={y.coverImageUrl} target="_blank" rel="noreferrer">Resim</a>
                         ) : ''}
                       </TableCell>
-                      <TableCell>{y.type || ''}</TableCell>
+                      <TableCell>{(y as any).type || ''}</TableCell>
                       <TableCell>{formatDate(y.createdAt)}</TableCell>
                     </TableRow>
                   ))}
@@ -358,7 +411,7 @@ export default function AICharacters() {
             />
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
               <TextField
-                label="Voice Id"
+                label="Genel Voice Id (varsayılan)"
                 value={form.voiceId}
                 onChange={(e) => setForm((s) => ({ ...s, voiceId: e.target.value }))}
                 fullWidth
@@ -369,6 +422,53 @@ export default function AICharacters() {
                 onChange={(e) => setForm((s) => ({ ...s, voiceIdName: e.target.value }))}
                 fullWidth
               />
+            </Stack>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <TextField
+                select
+                label="ElevenLabs Voice"
+                value={form.elevenlabsVoiceId}
+                onChange={(e) => setForm((s) => ({ ...s, elevenlabsVoiceId: e.target.value }))}
+                fullWidth
+                helperText={voicesLoading ? 'Voice listesi yükleniyor...' : ''}
+              >
+                <MenuItem value="">(Seçilmedi)</MenuItem>
+                {elevenVoices.map((v) => (
+                  <MenuItem key={v.id} value={v.externalVoiceId}>
+                    {v.name} ({v.languageCode || 'unknown'} - {v.gender || '?'})
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                label="OpenAI Voice"
+                value={form.openaiVoiceId}
+                onChange={(e) => setForm((s) => ({ ...s, openaiVoiceId: e.target.value }))}
+                fullWidth
+                helperText={voicesLoading ? 'Voice listesi yükleniyor...' : ''}
+              >
+                <MenuItem value="">(Seçilmedi)</MenuItem>
+                {openaiVoices.map((v) => (
+                  <MenuItem key={v.id} value={v.externalVoiceId}>
+                    {v.name} ({v.languageCode || 'unknown'} - {v.gender || '?'})
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                label="DeepAI / Deepgram Voice"
+                value={form.deepaiVoiceId}
+                onChange={(e) => setForm((s) => ({ ...s, deepaiVoiceId: e.target.value }))}
+                fullWidth
+                helperText={voicesLoading ? 'Voice listesi yükleniyor...' : ''}
+              >
+                <MenuItem value="">(Seçilmedi)</MenuItem>
+                {deepaiVoices.map((v) => (
+                  <MenuItem key={v.id} value={v.externalVoiceId}>
+                    {v.name} ({v.languageCode || 'unknown'} - {v.gender || '?'})
+                  </MenuItem>
+                ))}
+              </TextField>
             </Stack>
             <TextField
               label="Biyografi"
