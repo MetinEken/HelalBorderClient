@@ -150,10 +150,10 @@ export default function Abonelikler() {
     }
 
     if (form.platform === 'android') {
-      if (!form.sku || !form.basePlanId || !form.offerId || !form.googlePlayProductId) {
+      if (!form.sku || !form.basePlanId || !form.googlePlayProductId) {
         setStatus({
           type: 'error',
-          message: 'Android için SKU, Base Plan ID, Offer ID ve Google Play Product ID zorunludur',
+          message: 'Android için SKU, Base Plan ID ve Google Play Product ID zorunludur',
         })
         return
       }
