@@ -21,6 +21,7 @@ import Youtube from './pages/Youtube'
 import BaseInstructer from './pages/BaseInstructer'
 import AICharacters from './pages/AICharacters'
 import AwsVideoImages from './pages/AwsVideoImages'
+import Abonelikler from './pages/Abonelikler'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
           { path: 'base-instructer', element: <BaseInstructer /> },
           { path: 'ai-characters', element: <AICharacters /> },
           { path: 'aws-video-images', element: <AwsVideoImages /> },
+          { path: 'abonelikler', element: <Abonelikler /> },
           { path: '*', element: <Navigate to="/" /> },
         ],
       },
