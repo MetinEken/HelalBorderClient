@@ -66,6 +66,7 @@ function toFormState(item?: PaketDto): PaketDto {
     allowanceSeconds: item?.allowanceSeconds ?? 0,
     carryOverAllowed: item?.carryOverAllowed ?? true,
     maxCarryOverSeconds: item?.maxCarryOverSeconds ?? null,
+    token: item?.token ?? null,
     // Yeni iOS / store alanları için varsayılanlar
     periodUnit: (item?.periodUnit as PaketPeriodUnit | undefined) || 'month',
     periodCount: item?.periodCount ?? 1,
@@ -219,6 +220,7 @@ export default function Abonelikler() {
               <TableCell>Platform</TableCell>
               <TableCell>Aktif</TableCell>
               <TableCell>Allowance (sn)</TableCell>
+              <TableCell>Token</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -244,6 +246,7 @@ export default function Abonelikler() {
                 <TableCell>{r.platform}</TableCell>
                 <TableCell>{r.aktif ? 'Evet' : 'Hayır'}</TableCell>
                 <TableCell>{r.allowanceSeconds}</TableCell>
+                <TableCell>{r.token ?? '-'}</TableCell>
               </TableRow>
             ))}
             {(!loading && !error && (!Array.isArray(rows) || rows.length === 0)) && (
@@ -305,6 +308,19 @@ export default function Abonelikler() {
                 type="number"
                 value={String(form.allowanceSeconds)}
                 onChange={(e) => setForm((s) => ({ ...s, allowanceSeconds: parseInt(e.target.value || '0', 10) || 0 }))}
+                fullWidth
+              />
+              <TextField
+                label="Token"
+                type="number"
+                value={form.token != null ? String(form.token) : ''}
+                onChange={(e) => {
+                  const v = e.target.value
+                  setForm((s) => ({
+                    ...s,
+                    token: v === '' ? null : (parseInt(v || '0', 10) || 0),
+                  }))
+                }}
                 fullWidth
               />
             </Stack>
@@ -570,6 +586,9 @@ export default function Abonelikler() {
               </Typography>
               <Typography variant="body2">
                 <strong>Allowance (sn):</strong> {detailItem.allowanceSeconds}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Token:</strong> {detailItem.token ?? '-'}
               </Typography>
               <Typography variant="body2">
                 <strong>Carry Over Allowed:</strong> {detailItem.carryOverAllowed ? 'Evet' : 'Hayır'}

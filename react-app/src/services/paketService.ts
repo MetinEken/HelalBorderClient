@@ -41,6 +41,8 @@ export interface PaketDto {
   carryOverAllowed?: boolean
   maxCarryOverSeconds?: number | null
 
+  token?: number | null
+
   // Periyot bilgisi (özellikle iOS için)
   periodUnit?: PaketPeriodUnit | null
   periodCount?: number | null
