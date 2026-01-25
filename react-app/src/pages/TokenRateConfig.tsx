@@ -119,8 +119,8 @@ export default function TokenRateConfigPage() {
     }
 
     const rate = parseFloat(formRate)
-    if (isNaN(rate) || rate <= 0) {
-      setError('Rate pozitif bir sayı olmalıdır')
+    if (isNaN(rate) || rate < 0) {
+      setError('Rate negatif olamaz (0 veya pozitif olmalıdır)')
       return
     }
 
