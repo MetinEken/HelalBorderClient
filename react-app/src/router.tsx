@@ -23,6 +23,7 @@ import AICharacters from './pages/AICharacters'
 import AwsVideoImages from './pages/AwsVideoImages'
 import Abonelikler from './pages/Abonelikler'
 import VoiceAiConfigPage from './pages/VoiceAiConfig'
+import TokenRateConfigPage from './pages/TokenRateConfig'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
           { path: 'aws-video-images', element: <AwsVideoImages /> },
           { path: 'abonelikler', element: <Abonelikler /> },
           { path: 'voice-ai-config', element: <VoiceAiConfigPage /> },
+          { path: 'token-rate-config', element: <TokenRateConfigPage /> },
           { path: '*', element: <Navigate to="/" /> },
         ],
       },

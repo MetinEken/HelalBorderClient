@@ -28,6 +28,7 @@ const drawerMenus = [
   { label: 'AWS Video Images', to: '/aws-video-images' },
   { label: 'Abonelikler', to: '/abonelikler' },
   { label: 'Voice AI Config', to: '/voice-ai-config' },
+  { label: 'Token Rate Config', to: '/token-rate-config' },
 ]
 
 export default function Layout(){
