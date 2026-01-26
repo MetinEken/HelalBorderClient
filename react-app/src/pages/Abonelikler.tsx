@@ -188,10 +188,6 @@ export default function Abonelikler() {
         setStatus({ type: 'error', message: 'iOS için App Store Product ID zorunludur' })
         return
       }
-      if (!form.periodUnit || !form.periodCount) {
-        setStatus({ type: 'error', message: 'iOS için periyot birimi ve periyot sayısı zorunludur' })
-        return
-      }
     }
     try {
       if (editingId != null) {
@@ -463,38 +459,36 @@ export default function Abonelikler() {
               />
             </Stack>
 
-            {form.platform === 'ios' && (
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                <FormControl fullWidth>
-                  <InputLabel id="period-unit-label">Periyot Birimi</InputLabel>
-                  <Select
-                    labelId="period-unit-label"
-                    label="Periyot Birimi"
-                    value={form.periodUnit || ''}
-                    onChange={(e) =>
-                      setForm((s) => ({ ...s, periodUnit: (e.target.value || 'month') as PaketPeriodUnit }))
-                    }
-                  >
-                    <MenuItem value="day">day</MenuItem>
-                    <MenuItem value="week">week</MenuItem>
-                    <MenuItem value="month">month</MenuItem>
-                    <MenuItem value="year">year</MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  label="Periyot Sayısı"
-                  type="number"
-                  value={form.periodCount != null ? String(form.periodCount) : ''}
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <FormControl fullWidth>
+                <InputLabel id="period-unit-label">Periyot Birimi</InputLabel>
+                <Select
+                  labelId="period-unit-label"
+                  label="Periyot Birimi"
+                  value={form.periodUnit || ''}
                   onChange={(e) =>
-                    setForm((s) => ({
-                      ...s,
-                      periodCount: e.target.value === '' ? null : parseInt(e.target.value || '0', 10) || 0,
-                    }))
+                    setForm((s) => ({ ...s, periodUnit: (e.target.value || 'month') as PaketPeriodUnit }))
                   }
-                  fullWidth
-                />
-              </Stack>
-            )}
+                >
+                  <MenuItem value="day">day</MenuItem>
+                  <MenuItem value="week">week</MenuItem>
+                  <MenuItem value="month">month</MenuItem>
+                  <MenuItem value="year">year</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                label="Periyot Sayısı"
+                type="number"
+                value={form.periodCount != null ? String(form.periodCount) : ''}
+                onChange={(e) =>
+                  setForm((s) => ({
+                    ...s,
+                    periodCount: e.target.value === '' ? null : parseInt(e.target.value || '0', 10) || 0,
+                  }))
+                }
+                fullWidth
+              />
+            </Stack>
 
             {form.platform === 'ios' && (
               <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
