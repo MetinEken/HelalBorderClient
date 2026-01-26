@@ -83,6 +83,10 @@ export default function Abonelikler() {
   const [error, setError] = useState<string | null>(null)
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
+  // Filtreler
+  const [filterPlatform, setFilterPlatform] = useState<string>('all')
+  const [filterActive, setFilterActive] = useState<string>('all')
+
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<PaketDto>(() => toFormState())
@@ -90,6 +94,25 @@ export default function Abonelikler() {
 
   const [detailOpen, setDetailOpen] = useState(false)
   const [detailItem, setDetailItem] = useState<PaketDto | null>(null)
+
+  // Filtrelenmiş satırlar
+  const filteredRows = useMemo(() => {
+    let result = rows
+    
+    // Platform filtresi
+    if (filterPlatform !== 'all') {
+      result = result.filter(r => r.platform === filterPlatform)
+    }
+    
+    // Aktif durumu filtresi
+    if (filterActive === 'active') {
+      result = result.filter(r => r.aktif === true)
+    } else if (filterActive === 'inactive') {
+      result = result.filter(r => r.aktif === false)
+    }
+    
+    return result
+  }, [rows, filterPlatform, filterActive])
 
   async function loadList() {
     setLoading(true)
@@ -194,7 +217,35 @@ export default function Abonelikler() {
       {status && <Alert sx={{ mb: 2 }} severity={status.type}>{status.message}</Alert>}
       {error && <Alert sx={{ mb: 2 }} severity="error">{error}</Alert>}
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} sx={{ mb: 2 }} alignItems={{ md: 'center' }}>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 2 }} alignItems={{ md: 'center' }}>
+        <Stack direction="row" spacing={2}>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="filter-platform-label">Platform</InputLabel>
+            <Select
+              labelId="filter-platform-label"
+              label="Platform"
+              value={filterPlatform}
+              onChange={(e) => setFilterPlatform(e.target.value)}
+            >
+              <MenuItem value="all">Tümü</MenuItem>
+              <MenuItem value="android">Android</MenuItem>
+              <MenuItem value="ios">iOS</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="filter-active-label">Durum</InputLabel>
+            <Select
+              labelId="filter-active-label"
+              label="Durum"
+              value={filterActive}
+              onChange={(e) => setFilterActive(e.target.value)}
+            >
+              <MenuItem value="all">Tümü</MenuItem>
+              <MenuItem value="active">Aktif</MenuItem>
+              <MenuItem value="inactive">Pasif</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction="row" spacing={1}>
           <Button variant="contained" startIcon={<AddIcon />} onClick={onNew}>Yeni Paket</Button>
@@ -224,7 +275,7 @@ export default function Abonelikler() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(Array.isArray(rows) ? rows : []).map((r) => (
+            {(Array.isArray(filteredRows) ? filteredRows : []).map((r) => (
               <TableRow key={r.id} hover>
                 <TableCell>
                   <Stack direction="row" spacing={0.5}>
@@ -249,9 +300,11 @@ export default function Abonelikler() {
                 <TableCell>{r.token ?? '-'}</TableCell>
               </TableRow>
             ))}
-            {(!loading && !error && (!Array.isArray(rows) || rows.length === 0)) && (
+            {(!loading && !error && (!Array.isArray(filteredRows) || filteredRows.length === 0)) && (
               <TableRow>
-                <TableCell colSpan={8}>Kayıt bulunamadı</TableCell>
+                <TableCell colSpan={9}>
+                  {rows.length > 0 ? 'Filtreye uygun kayıt bulunamadı' : 'Kayıt bulunamadı'}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
