@@ -29,6 +29,7 @@ const drawerMenus = [
   { label: 'Abonelikler', to: '/abonelikler' },
   { label: 'Voice AI Config', to: '/voice-ai-config' },
   { label: 'Token Rate Config', to: '/token-rate-config' },
+  { label: 'Versiyon Yönetimi', to: '/version-management' },
 ]
 
 export default function Layout(){
